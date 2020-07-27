@@ -1,7 +1,7 @@
 {
   "name": "react-concurrent",
   "version": "0.0.1",
-  "description": "A state management with react context for apps which using hooks.",
+  "description": "AThe new Render-as-You-Fetch pattern for fetching data.",
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint --ext '.js' .",
@@ -9,20 +9,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/poolkhord/react-principal.git"
+    "url": "git+https://github.com/poolkhord/react-concurrent.git"
   },
   "keywords": [
-    "react-native",
-    "react-native-web",
-    "calendar",
-    "jalali"
+    "react",
+    "Render-as-You-Fetch",
+    "concurrent",
+    "fetch",
+    "async",
+    "hooks"
   ],
   "author": "Hossein mohammadi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/poolkhord/react-principal/issues"
+    "url": "https://github.com/poolkhord/react-concurrent/issues"
   },
-  "homepage": "https://github.com/poolkhord/react-principal#readme",
+  "homepage": "https://github.com/poolkhord/react-concurrent#readme",
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@commitlint/config-conventional": "^9.1.1",
