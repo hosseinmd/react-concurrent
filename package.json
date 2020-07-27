@@ -1,0 +1,67 @@
+{
+  "name": "react-principal",
+  "version": "0.1.2",
+  "description": "A state management with react context for apps which using hooks.",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint --ext '.js' .",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poolkhord/react-principal.git"
+  },
+  "keywords": [
+    "react-native",
+    "react-native-web",
+    "calendar",
+    "jalali"
+  ],
+  "author": "Hossein mohammadi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/poolkhord/react-principal/issues"
+  },
+  "homepage": "https://github.com/poolkhord/react-principal#readme",
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@commitlint/config-conventional": "^9.1.1",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "@typescript-eslint/parser": "^3.7.1",
+    "babel-jest": "^26.1.0",
+    "babel-preset-react-native": "^4.0.1",
+    "commitlint": "^9.1.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.5.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "jest": "^26.1.0",
+    "prettier": "^2.0.5",
+    "react": "^16.13.1",
+    "react-art": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
+    "react-test-renderer": "^16.13.1",
+    "typescript": "^3.9.7"
+  },
+  "peerDependencies": {
+    "react": ">=16.13"
+  },
+  "dependencies": {
+    "invariant": "^2.2.4",
+    "lodash-es": "^4.17.15"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "yarn lint"
+    }
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.(js)$": "babel-jest"
+    },
+    "preset": "react-native"
+  }
+}
