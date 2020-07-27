@@ -1,6 +1,6 @@
 {
-  "name": "react-principal",
-  "version": "0.1.2",
+  "name": "react-concurrent",
+  "version": "0.0.1",
   "description": "A state management with react context for apps which using hooks.",
   "main": "src/index.js",
   "scripts": {
