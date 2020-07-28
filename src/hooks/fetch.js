@@ -10,10 +10,11 @@ import { isEqual } from "lodash-es";
 
 /**
  * @template T
- * @typedef {import("../resource").Resource<T>} Resource */
+ * @typedef {import("../resource").Resource<T>} Resource
+ */
 
 /**
- *@template T
+ * @template T
  * @typedef {object} FetchResponse
  * @property {Resource<T>} resource
  * @property {() => void} refetch
@@ -117,7 +118,7 @@ function useFetchInfinite(fetchFunc, { limit = 30 } = {}) {
         fetchFunc({ limit, skip: skipRef.current }),
       );
       resources[resources.length - 1].preload();
-      setResource(sources => [...sources]);
+      setResource((sources) => [...sources]);
 
       return;
     }
@@ -131,11 +132,11 @@ function useFetchInfinite(fetchFunc, { limit = 30 } = {}) {
       fetchFunc({ limit, skip: skipRef.current }),
     );
     newResource.preload();
-    setResource(sources => [...sources, newResource]);
+    setResource((sources) => [...sources, newResource]);
   }, [fetchFunc, limit, resources]);
 
   const unstable_refresh = useCallback(() => {
-    setResource(sources => [...sources]);
+    setResource((sources) => [...sources]);
   }, []);
 
   return { resources, fetchMore, unstable_refresh };

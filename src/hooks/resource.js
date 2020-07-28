@@ -9,29 +9,28 @@ import {
 /**
  * Is a boolean. It’s React’s way of informing us whether we’re waiting.
  *
- * @typedef {boolean} isPending
+ * @typedef {boolean} IsLoading
  */
 
 /**
  * @template T
- * @typedef {import("../resource").Resource<T>} Resource */
+ * @typedef {import("../resource").Resource<T>} Resource
+ */
 
 /**
  * @template T
- * @typedef {{data:T, isPending:isPending, error:Error}} ResourceResponse
- *
+ * @typedef {{ data: T; isLoading: IsLoading; error: Error }} ResourceResponse
  */
 /**
  * @template T
- * @typedef {{data:T[], isPending:isPending, error:Error}} ResourcesResponse
- *
+ * @typedef {{ data: T[]; isLoading: IsLoading; error: Error }} ResourcesResponse
  */
 
 /**
  * This function allow to use resource without React.Suspense.
  *
  * @example
- *   const {data = [], isLoading, error} = useResource(resource, onError);
+ *   const { data = [], isLoading, error } = useResource(resource, onError);
  *
  * @template V
  * @param {Resource<V>} resource
@@ -40,14 +39,14 @@ import {
 function useResource(resource) {
   let [, forceUpdate] = useState({});
 
-  let { data, error, isPending } = _destructorResource(resource);
+  let { data, error, isLoading } = _destructorResource(resource);
 
   useLayoutEffect(() => {
     let destructed = false;
 
     const update = () => !destructed && forceUpdate({});
 
-    _listenerToResource(resource, { data, error, isPending }, update);
+    _listenerToResource(resource, { data, error, isLoading }, update);
 
     return () => {
       destructed = true;
@@ -55,7 +54,7 @@ function useResource(resource) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resource]);
 
-  return { data, isPending, error };
+  return { data, isLoading, error };
 }
 
 /**
@@ -95,9 +94,9 @@ function useResources(resources) {
     return [...prev, ..._data];
   }, []);
   const error = resolved[resolved.length - 1].error;
-  const isPending = resolved[resolved.length - 1].isPending;
+  const isLoading = resolved[resolved.length - 1].isLoading;
 
-  return { data, isPending, error };
+  return { data, isLoading, error };
 }
 
 function _destructorResource(source) {
@@ -105,21 +104,21 @@ function _destructorResource(source) {
 
   let data;
   let error;
-  let isPending;
+  let isLoading;
   if (source.status === RESOURCE_RESOLVED) {
     data = source.value;
-    isPending = false;
+    isLoading = false;
   } else if (source.status === RESOURCE_REJECTED) {
-    isPending = false;
+    isLoading = false;
     error = source.value;
   } else {
-    isPending = true;
+    isLoading = true;
   }
 
   return {
     data,
     error,
-    isPending,
+    isLoading,
   };
 }
 

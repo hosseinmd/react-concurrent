@@ -43,14 +43,14 @@ const CacheContext = React.createContext(null);
  */
 function accessResult(resource, fetch) {
   function getResult() {
-    const thenable = fetch().catch(error => {
+    const thenable = fetch().catch((error) => {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_REJECTED;
         resource.value = error;
       }
     });
 
-    thenable.then(value => {
+    thenable.then((value) => {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_RESOLVED;
         resource.value = value;

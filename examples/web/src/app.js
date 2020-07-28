@@ -8,9 +8,9 @@ import {
 
 export default () => {
   const { data, isPending, error } = useFetching(() =>
-    fetch("https://gorest.co.in/public-api/users", { method: "GET" }).then(r =>
-      r.json(),
-    ),
+    fetch("https://gorest.co.in/public-api/users", {
+      method: "GET",
+    }).then((r) => r.json()),
   );
 
   return (
@@ -26,9 +26,9 @@ export default () => {
 
 function TestFetch() {
   const { resource } = useFetch(() =>
-    fetch("https://gorest.co.in/public-api/users", { method: "GET" }).then(r =>
-      r.json(),
-    ),
+    fetch("https://gorest.co.in/public-api/users", {
+      method: "GET",
+    }).then((r) => r.json()),
   );
 
   const { data, isPending, error } = useResource(resource);
@@ -42,9 +42,9 @@ function TestFetch() {
 
 function TestFetchCallback() {
   const { resource, refetch } = useFetchCallback(() =>
-    fetch("https://gorest.co.in/public-api/users", { method: "GET" }).then(r =>
-      r.json(),
-    ),
+    fetch("https://gorest.co.in/public-api/users", {
+      method: "GET",
+    }).then((r) => r.json()),
   );
 
   const { data, isPending, error } = useResource(resource);
