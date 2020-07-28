@@ -3,6 +3,7 @@
   "version": "0.0.4",
   "description": "AThe new Render-as-You-Fetch pattern for fetching data.",
   "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "lint": "eslint --ext '.js' .",
     "test": "jest"
