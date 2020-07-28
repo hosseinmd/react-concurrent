@@ -7,7 +7,7 @@ import {
 } from "../../../src";
 
 export default () => {
-  const { data, isPending, error } = useFetching(() =>
+  const { data, isLoading, error } = useFetching(() =>
     fetch("https://gorest.co.in/public-api/users", {
       method: "GET",
     }).then((r) => r.json()),
@@ -15,7 +15,7 @@ export default () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <div>{isPending ? "is loading ... " : JSON.stringify(data)}</div>
+      <div>{isLoading ? "is loading ... " : JSON.stringify(data)}</div>
       <p>{error?.message ?? ""}</p>
 
       <TestFetch />
@@ -31,10 +31,10 @@ function TestFetch() {
     }).then((r) => r.json()),
   );
 
-  const { data, isPending, error } = useResource(resource);
+  const { data, isLoading, error } = useResource(resource);
   return (
     <>
-      <div>{isPending ? "is loading ... " : JSON.stringify(data)}</div>
+      <div>{isLoading ? "is loading ... " : JSON.stringify(data)}</div>
       <p>{error?.message ?? ""}</p>
     </>
   );
@@ -47,7 +47,7 @@ function TestFetchCallback() {
     }).then((r) => r.json()),
   );
 
-  const { data, isPending, error } = useResource(resource);
+  const { data, isLoading, error } = useResource(resource);
   return (
     <>
       <button
@@ -57,7 +57,7 @@ function TestFetchCallback() {
       >
         start fetch
       </button>
-      <div>{isPending ? "is loading ... " : JSON.stringify(data)}</div>
+      <div>{isLoading ? "is loading ... " : JSON.stringify(data)}</div>
       <p>{error?.message ?? ""}</p>
     </>
   );

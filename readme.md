@@ -18,7 +18,7 @@ import { createResource, useResource } from "react-concurrent";
 const resource = createResource(() => fetch("http://example.com"));
 
 const app = () => {
-  const { data, isPending, error } = useResource(resource);
+  const { data, isLoading, error } = useResource(resource);
 };
 ```
 
@@ -30,7 +30,7 @@ useFetching give us directly data, don't need to use useResource
 import { useFetching } from "react-concurrent";
 
 const app = () => {
-  const { data, isPending, error } = useFetching(() =>
+  const { data, isLoading, error } = useFetching(() =>
     fetch("http://example.com"),
   );
 };
@@ -53,7 +53,7 @@ const app = () => {
 };
 
 const OtherComponent = ({ resource }) => {
-  const { data, isPending, error } = useResource(resource);
+  const { data, isLoading, error } = useResource(resource);
 };
 ```
 
@@ -78,7 +78,7 @@ const app = () => {
 };
 
 const OtherComponent = ({ resource }) => {
-  const { data, isPending, error } = useResource(resource);
+  const { data, isLoading, error } = useResource(resource);
 };
 ```
 
