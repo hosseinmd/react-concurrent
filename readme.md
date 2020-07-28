@@ -24,6 +24,8 @@ const app = () => {
 
 ### useFetching
 
+useFetching give us directly data, don't need to use useResource
+
 ```js
 import { useFetching } from "react-concurrent";
 
@@ -35,6 +37,8 @@ const app = () => {
 ```
 
 ### useFetch
+
+useFetch give us a resource, we need to pass that to useResource for get data
 
 ```js
 import { useFetch, useResource } from "react-concurrent";
@@ -54,6 +58,8 @@ const OtherComponent = ({ resource }) => {
 ```
 
 ### useFetchCallback
+
+useFetchCallback doesn't call fetch until call refetch
 
 ```js
 import { useFetchCallback, useResource } from "react-concurrent";
@@ -77,6 +83,8 @@ const OtherComponent = ({ resource }) => {
 ```
 
 ### React Concurrent Mode
+
+As mentioned on react document you could use this
 
 ```js
 import { createResource } from "react-concurrent";
