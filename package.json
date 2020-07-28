@@ -1,6 +1,6 @@
 {
   "name": "react-concurrent",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "AThe new Render-as-You-Fetch pattern for fetching data.",
   "main": "src/index.js",
   "scripts": {
@@ -38,8 +38,8 @@
     "eslint-plugin-prettier": "^3.1.4",
     "husky": "^4.2.5",
     "jest": "^26.1.0",
-    "prettier-plugin-jsdoc": "0.0.20",
     "prettier": "^2.0.5",
+    "prettier-plugin-jsdoc": "0.0.20",
     "react": "^16.13.1",
     "react-art": "^16.13.1",
     "react-dom": "^16.13.1",
