@@ -4,27 +4,15 @@
 
 # react-concurrent
 
-The new Render-as-You-Fetch pattern for fetching data. This library aims at implementing that pattern for async APIs.
+The new Render-as-You-Fetch pattern for fetching data. This library aims at implementing relay pattern for async APIs.
 
 This is tested on huge project. Everything is stable. but we are improving that. if you have an idea you are so welcome.
 
 ## Use
 
-### createResource
-
-```js
-import { createResource, useResource } from "react-concurrent";
-
-const resource = createResource(() => fetch("http://example.com"));
-
-const app = () => {
-  const { data, isLoading, error } = useResource(resource);
-};
-```
-
 ### useFetching
 
-useFetching give us directly data, don't need to use useResource
+useFetching give us directly data after api resolve,
 
 ```js
 import { useFetching } from "react-concurrent";
@@ -78,6 +66,19 @@ const app = () => {
 };
 
 const OtherComponent = ({ resource }) => {
+  const { data, isLoading, error } = useResource(resource);
+};
+```
+
+### createResource
+
+```js
+import { createResource, useResource } from "react-concurrent";
+
+const resource = createResource(() => fetch("http://example.com"));
+// resource.preload(); // fetching before render component
+
+const app = () => {
   const { data, isLoading, error } = useResource(resource);
 };
 ```
