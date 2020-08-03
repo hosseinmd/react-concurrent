@@ -61,7 +61,7 @@ function useFetch(fetchFunc, ...arg) {
  *     return fetch("url").then((res) => res.toJson());
  *   }
  *
- *   const [resource, refetch] = useFetchCallback(settlementRequest);
+ *   const { resource, refetch } = useFetchCallback(settlementRequest);
  *
  *   function onPress() {
  *     refetch({ id: 20 });
@@ -72,18 +72,20 @@ function useFetch(fetchFunc, ...arg) {
  * @returns {FetchResponse<T>}
  */
 function useFetchCallback(fetchFunc) {
+  const fetchRef = useRef(fetchFunc);
+
+  if (fetchRef.current !== fetchFunc) {
+    fetchRef.current = fetchFunc;
+  }
   const [resource, setResource] = useState(
     createResource(async () => undefined),
   );
 
-  const refetch = useCallback(
-    (...arg) => {
-      const newResource = createResource(() => fetchFunc(...arg));
-      newResource.preload();
-      setResource(newResource);
-    },
-    [fetchFunc],
-  );
+  const refetch = useCallback((...arg) => {
+    const newResource = createResource(() => fetchRef.current(...arg));
+    newResource.preload();
+    setResource(newResource);
+  }, []);
 
   return { resource, refetch };
 }
