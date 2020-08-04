@@ -8,7 +8,19 @@ The new Render-as-You-Fetch pattern for fetching data. This library aims at impl
 
 This is tested on huge project. Everything is stable. but we are improving that. if you have an idea you are so welcome.
 
-## Use
+## TOC
+
+- [install](#install)
+- [useFetching](#useFetching)
+- [useFetch](#useFetch)
+- [useFetchCallback](#useFetchCallback)
+- [createFetchContext](#createFetchContext)
+- [createResource](#createResource)
+- [React_Concurrent_Mode](#React_Concurrent_Mode)
+
+### install
+
+`$ yarn add react-concurrent`
 
 ### useFetching
 
@@ -70,6 +82,32 @@ const OtherComponent = ({ resource }) => {
 };
 ```
 
+### createFetchContext
+
+```js
+const CommissionContext = createFetchContext(({ id })=> fetch("http://example.com/"+id));
+
+function App(){
+  const [ id, setId ] = useState(0)
+
+  return(
+    <CommissionContext.Provider id={id} >
+      <OtherComponent/> 
+    </CommissionContext.Provider>
+  )
+}
+
+const OtherComponent = () => {
+  const { data, isLoading, error } = CommissionContext.useResource(resource);
+
+  return (
+    isLoading?
+      <p>Commission is loading...</p>
+      :<p>Commission is {data}</p>
+  )
+};
+```
+
 ### createResource
 
 ```js
@@ -83,7 +121,7 @@ const app = () => {
 };
 ```
 
-### React Concurrent Mode
+### React_Concurrent_Mode
 
 As mentioned on react document you could use this
 
