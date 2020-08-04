@@ -21,6 +21,14 @@ import { isEqual } from "lodash-es";
  */
 
 /**
+ * @template T
+ * @typedef {object} FetchCallbackResponse
+ * @property {Resource<T>} resource
+ * @property {() => void} refetch
+ * @property {() => void} clear
+ */
+
+/**
  * For fetching related to state
  *
  * @example
@@ -69,7 +77,7 @@ function useFetch(fetchFunc, ...arg) {
  *
  * @template T , V
  * @param {(...param: V[]) => Promise<T>} fetchFunc
- * @returns {FetchResponse<T>}
+ * @returns {FetchCallbackResponse<T>}
  */
 function useFetchCallback(fetchFunc) {
   const fetchRef = useRef(fetchFunc);
@@ -87,7 +95,13 @@ function useFetchCallback(fetchFunc) {
     setResource(newResource);
   }, []);
 
-  return { resource, refetch };
+  const clear = useCallback(() => {
+    const newResource = createResource(() => undefined);
+    newResource.preload();
+    setResource(newResource);
+  }, []);
+
+  return { resource, refetch, clear };
 }
 
 /**
