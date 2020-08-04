@@ -98,7 +98,7 @@ function App(){
 }
 
 const OtherComponent = () => {
-  const { data, isLoading, error } = CommissionContext.useResource(resource);
+  const { data, isLoading, error } = CommissionContext.useResource();
 
   return (
     isLoading?
