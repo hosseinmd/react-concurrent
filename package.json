@@ -1,7 +1,7 @@
 {
   "name": "react-concurrent",
   "version": "0.1.2",
-  "description": "AThe new Render-as-You-Fetch pattern for fetching data.",
+  "description": "A new Render-as-You-Fetch pattern for fetching data.",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/poolkhord/react-concurrent.git"
+    "url": "git+https://github.com/hosseinmd/react-concurrent.git"
   },
   "keywords": [
     "react",
@@ -23,9 +23,9 @@
   "author": "Hossein mohammadi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/poolkhord/react-concurrent/issues"
+    "url": "https://github.com/hosseinmd/react-concurrent/issues"
   },
-  "homepage": "https://github.com/poolkhord/react-concurrent#readme",
+  "homepage": "https://github.com/hosseinmd/react-concurrent#readme",
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@commitlint/config-conventional": "^9.1.1",
