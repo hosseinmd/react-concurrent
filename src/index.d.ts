@@ -6,4 +6,5 @@ export {
   useFetching,
   useResource,
   useResources,
+  createFetchContext,
 } from "./hooks";
