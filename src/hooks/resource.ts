@@ -4,6 +4,7 @@ import {
   RESOURCE_RESOLVED,
   RESOURCE_REJECTED,
   RESOURCE_PENDING,
+  Resource,
 } from "../resource";
 
 /**
@@ -12,31 +13,25 @@ import {
  * @typedef {boolean} IsLoading
  */
 
-/**
- * @template T
- * @typedef {import("../resource").Resource<T>} Resource
- */
+export interface ResourceResponse<T> {
+  data: T;
+  isLoading: boolean;
+  error: Error;
+}
 
-/**
- * @template T
- * @typedef {{ data: T; isLoading: IsLoading; error: Error }} ResourceResponse
- */
-/**
- * @template T
- * @typedef {{ data: T[]; isLoading: IsLoading; error: Error }} ResourcesResponse
- */
+interface ResourcesResponse<T> {
+  data: T[];
+  isLoading: boolean;
+  error: Error;
+}
 
 /**
  * This function allow to use resource without React.Suspense.
  *
  * @example
  *   const { data = [], isLoading, error } = useResource(resource, onError);
- *
- * @template V
- * @param {Resource<V>} resource
- * @returns {ResourceResponse<V>}
  */
-function useResource(resource) {
+function useResource<V>(resource: Resource<V>): ResourceResponse<V> {
   let [, forceUpdate] = useState({});
 
   let { data, error, isLoading } = _destructorResource(resource);
@@ -62,12 +57,8 @@ function useResource(resource) {
  *
  * @example
  *   const [data = [], isLoading, error] = useResource(resource, onError);
- *
- * @template V
- * @param {Resource<V>[]} resources
- * @returns {ResourcesResponse<V>}
  */
-function useResources(resources) {
+function useResources<V>(resources: Resource<V>[]): ResourcesResponse<V> {
   let [, forceUpdate] = useState({});
   const resolved = resources.map(_destructorResource);
 
@@ -86,7 +77,7 @@ function useResources(resources) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resources]);
 
-  const data = resolved.reduce((prev, { data: _data }) => {
+  const data = resolved.reduce((prev: any[], { data: _data }) => {
     if (!_data) {
       return prev;
     }
@@ -99,7 +90,7 @@ function useResources(resources) {
   return { data, isLoading, error };
 }
 
-function _destructorResource(source) {
+function _destructorResource(source: Resource<any>) {
   source.preload();
 
   let data;
@@ -122,7 +113,11 @@ function _destructorResource(source) {
   };
 }
 
-function _listenerToResource(resource, resolved, callback) {
+function _listenerToResource(
+  resource: Resource<any>,
+  resolved: ResourceResponse<any>,
+  callback: () => void,
+) {
   if (
     resource.status === RESOURCE_RESOLVED &&
     resolved.data !== resource.value

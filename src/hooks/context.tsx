@@ -1,21 +1,19 @@
 //@ts-check
 import React, { createContext, useMemo, useContext } from "react";
 import { useFetch } from "./fetch";
-import { useResource } from "./resource";
+import { useResource, ResourceResponse } from "./resource";
 
-/**
- * @template V, P
- * @param {(props: P) => Promise<V>} fetchFun
- * @returns {{
- *   Provider: React.FC<P>;
- *   useResource: import("./resource").ResourceResponse<V>;
- *   useRefetch(): () => void;
- * }}
- */
-function createFetchContext(fetchFun) {
-  /** @type {React.Context<any>} */
-  const Context = createContext(null);
-  const ContextRefetch = createContext(() => {});
+interface FetchContext<P, V> {
+  Provider: React.FC<P>;
+  useResource: ResourceResponse<V>;
+  useRefetch(): () => void;
+}
+
+function createFetchContext<V, P>(
+  fetchFun: (props: P) => Promise<V>,
+): FetchContext<P, V> {
+  const Context = createContext<ResourceResponse<V> | null>(null);
+  const ContextRefetch = createContext((): void => undefined);
 
   /** @param {V} props */
   // @ts-ignore

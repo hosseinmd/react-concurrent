@@ -1,27 +1,26 @@
-//@ts-check
-
 import * as React from "react";
 
 const RESOURCE_PENDING = 0;
 const RESOURCE_RESOLVED = 1;
 const RESOURCE_REJECTED = 2;
 
-/**
- * @template V
- * @typedef {{
- *   read(): V;
- *   preload(): void;
- *   status: RESOURCE_PENDING | RESOURCE_RESOLVED | RESOURCE_REJECTED;
- *   value: Promise<V> | any;
- * }} Resource
- */
+export interface Resource<V> {
+  read(): V | undefined;
+  preload(): void;
+  status:
+    | typeof RESOURCE_PENDING
+    | typeof RESOURCE_RESOLVED
+    | typeof RESOURCE_REJECTED
+    | undefined;
+  value: Promise<V> | any;
+}
 
 const ReactCurrentDispatcher =
   // @ts-ignore
   React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
     .ReactCurrentDispatcher;
 
-function readContext(Context, observedBits) {
+function readContext(Context: React.Context<any>) {
   const dispatcher = ReactCurrentDispatcher.current;
   if (dispatcher === null) {
     throw new Error(
@@ -30,18 +29,15 @@ function readContext(Context, observedBits) {
         "lifecycle methods.",
     );
   }
-  return dispatcher.readContext(Context, observedBits);
+  return dispatcher.readContext(Context);
 }
 
 const CacheContext = React.createContext(null);
 
-/**
- * @template V
- * @param {Resource<V>} resource
- * @param {() => Promise<V>} fetch
- * @returns {Resource<V>}
- */
-function accessResult(resource, fetch) {
+function accessResult<V>(
+  resource: Resource<V>,
+  fetch: () => Promise<V>,
+): Resource<V> {
   function getResult() {
     const thenable = fetch().catch((error) => {
       if (resource.status === RESOURCE_PENDING) {
@@ -71,22 +67,14 @@ function accessResult(resource, fetch) {
   }
 }
 
-/**
- * @template V
- * @param {() => Promise<V>} fetch
- * @returns {Resource<V>}
- */
-function createResource(fetch) {
-  /** @type {Resource<V>} */
-  const resource = {
+function createResource<V>(fetch: () => Promise<V>): Resource<V> {
+  const resource: Resource<V> = {
     status: undefined,
     value: undefined,
-    /** @returns {V} */
     read() {
       // react-cache currently doesn't rely on context, but it may in the
       // future, so we read anyway to prevent access outside of render.
       readContext(CacheContext);
-      /** @type {Resource<V>} */
       const result = accessResult(resource, fetch);
 
       switch (result.status) {
@@ -108,7 +96,6 @@ function createResource(fetch) {
       }
     },
 
-    /** @returns {void} */
     preload() {
       accessResult(resource, fetch);
     },

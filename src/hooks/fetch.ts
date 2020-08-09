@@ -4,46 +4,36 @@ import {
   createResource,
   RESOURCE_PENDING,
   RESOURCE_REJECTED,
+  Resource,
 } from "../resource";
 import { useResource } from "./resource";
 import { isEqual } from "lodash-es";
 
-/**
- * @template T
- * @typedef {import("../resource").Resource<T>} Resource
- */
+interface FetchResponse<T> {
+  resource: Resource<T>;
+  refetch: () => void;
+}
 
-/**
- * @template T
- * @typedef {object} FetchResponse
- * @property {Resource<T>} resource
- * @property {() => void} refetch
- */
-
-/**
- * @template T
- * @typedef {object} FetchCallbackResponse
- * @property {Resource<T>} resource
- * @property {() => void} refetch
- * @property {() => void} clear
- */
+interface FetchCallbackResponse<T> {
+  resource: Resource<T>;
+  refetch: () => void;
+  clear: () => void;
+}
 
 /**
  * For fetching related to state
  *
  * @example
  *   const [resource, refetch] = useFetch(fetchApi, accountID, amount);
- *
- * @template T , V
- * @param {(...arg: V[]) => Promise<T>} fetchFunc
- * @param {V[]} arg
- * @returns {FetchResponse<T>}
  */
-function useFetch(fetchFunc, ...arg) {
+function useFetch<T, V>(
+  fetchFunc: (...arg: V[]) => Promise<T>,
+  ...arg: V[]
+): FetchResponse<T> {
   const [, forceUpdate] = useState({});
 
-  const argRef = useRef([]);
-  const resourceRef = useRef(null);
+  const argRef = useRef<V[]>([]);
+  const resourceRef = useRef<Resource<any> | null>(null);
   let isArgChanged = isEqual(argRef.current, arg);
 
   if (!isArgChanged || resourceRef.current === null) {
@@ -74,19 +64,17 @@ function useFetch(fetchFunc, ...arg) {
  *   function onPress() {
  *     refetch({ id: 20 });
  *   }
- *
- * @template T , V
- * @param {(...param: V[]) => Promise<T>} fetchFunc
- * @returns {FetchCallbackResponse<T>}
  */
-function useFetchCallback(fetchFunc) {
+function useFetchCallback<T, V>(
+  fetchFunc: (...param: V[]) => Promise<T>,
+): FetchCallbackResponse<T> {
   const fetchRef = useRef(fetchFunc);
 
   if (fetchRef.current !== fetchFunc) {
     fetchRef.current = fetchFunc;
   }
   const [resource, setResource] = useState(
-    createResource(async () => undefined),
+    createResource<any>(async () => undefined),
   );
 
   const refetch = useCallback((...arg) => {
@@ -96,7 +84,7 @@ function useFetchCallback(fetchFunc) {
   }, []);
 
   const clear = useCallback(() => {
-    const newResource = createResource(() => undefined);
+    const newResource = createResource((): any => undefined);
     newResource.preload();
     setResource(newResource);
   }, []);
@@ -104,18 +92,15 @@ function useFetchCallback(fetchFunc) {
   return { resource, refetch, clear };
 }
 
-/**
- * @template T , V
- * @param {(...arg: V[]) => Promise<T>} fetchFunc
- * @param {V[]} arg
- * @returns {ReturnType<useResource>}
- */
-function useFetching(fetchFunc, ...arg) {
+function useFetching<T, V>(
+  fetchFunc: (...arg: V[]) => Promise<T>,
+  ...arg: V[]
+): ReturnType<typeof useResource> {
   const { resource } = useFetch(fetchFunc, ...arg);
   return useResource(resource);
 }
 
-function useFetchInfinite(fetchFunc, { limit = 30 } = {}) {
+function useFetchInfinite(fetchFunc: (arg: any) => any, { limit = 30 } = {}) {
   const skipRef = useRef(0);
   const [resources, setResource] = useState(() => {
     const source = createResource(() => fetchFunc({ limit, skip: 0 }));

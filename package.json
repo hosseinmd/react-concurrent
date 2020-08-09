@@ -2,9 +2,11 @@
   "name": "react-concurrent",
   "version": "0.1.4",
   "description": "A new Render-as-You-Fetch pattern for fetching data.",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
+    "prepare": "yarn build",
+    "build": "tsc",
     "lint": "eslint --ext '.js' .",
     "test": "jest"
   },
@@ -31,6 +33,10 @@
     "@commitlint/config-conventional": "^9.1.1",
     "@react-native-community/eslint-config": "^2.0.0",
     "@typescript-eslint/parser": "^3.7.1",
+    "@types/lodash-es": "^4.17.3",
+    "@types/invariant": "^2.2.33",
+    "@types/jest": "25.2.3",
+    "@types/react": "16.9.34",
     "babel-jest": "^26.1.0",
     "babel-preset-react-native": "^4.0.1",
     "commitlint": "^9.1.0",
@@ -46,6 +52,7 @@
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1",
     "react-test-renderer": "^16.13.1",
+    "ts-jest": "25.5.1",
     "typescript": "^3.9.7"
   },
   "peerDependencies": {
