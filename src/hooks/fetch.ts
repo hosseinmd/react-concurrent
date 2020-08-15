@@ -14,9 +14,9 @@ interface FetchResponse<T> {
   refetch: () => void;
 }
 
-interface FetchCallbackResponse<T> {
+interface FetchCallbackResponse<T, V> {
   resource: Resource<T>;
-  refetch: () => void;
+  refetch: (...arg: V[]) => void;
   clear: () => void;
 }
 
@@ -67,7 +67,7 @@ function useFetch<T, V>(
  */
 function useFetchCallback<T, V>(
   fetchFunc: (...param: V[]) => Promise<T>,
-): FetchCallbackResponse<T> {
+): FetchCallbackResponse<T, V> {
   const fetchRef = useRef(fetchFunc);
 
   if (fetchRef.current !== fetchFunc) {
