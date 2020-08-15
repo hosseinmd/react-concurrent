@@ -4,16 +4,16 @@ const RESOURCE_PENDING = 0;
 const RESOURCE_RESOLVED = 1;
 const RESOURCE_REJECTED = 2;
 
-export interface Resource<V> {
-  read(): V | undefined;
-  preload(): void;
+export type Resource<V> = {
+  read(): V | undefined,
+  preload(): void,
   status:
     | typeof RESOURCE_PENDING
     | typeof RESOURCE_RESOLVED
     | typeof RESOURCE_REJECTED
-    | undefined;
-  value: Promise<V> | any;
-}
+    | undefined,
+  value: Promise<V> | any,
+};
 
 const ReactCurrentDispatcher =
   // @ts-ignore
