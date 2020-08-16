@@ -31,26 +31,25 @@ interface FetchCallbackResponseV2<T, V1, V2> {
   clear: () => void;
 }
 
-type UseFetch = {
-  <T, V>(
-    fetchFunc: (param: V) => Promise<T>,
-    param: V,
-  ): FetchCallbackResponseV<T, V>,
+type UseFetchCallback = {
+  <T, V>(fetchFunc: (param: V) => Promise<T>): FetchCallbackResponseV<T, V>,
   <T, V1, V2>(
     fetchFunc: (v1: V1, v2: V2) => Promise<T>,
-    v1: V1,
-    v2: V2,
   ): FetchCallbackResponseV2<T, V1, V2>,
-  <T, V>(
-    fetchFunc: (...param: V[]) => Promise<T>,
-    ...param: V[]
-  ): FetchCallbackResponse<T, V>,
+  <T, V>(fetchFunc: (...param: V[]) => Promise<T>): FetchCallbackResponse<T, V>,
 };
 
-const _useFetch: any = <T, V>(
+/**
+ * For fetching related to state
+ *
+ * @example
+ *   const { resource, refetch } = useFetch(fetchApi, accountID, amount);
+ */
+
+function useFetch<T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,
   ...arg: V[]
-): FetchResponse<T> => {
+): FetchResponse<T> {
   const [, forceUpdate] = useState({});
 
   const argRef = useRef<V[]>([]);
@@ -69,15 +68,7 @@ const _useFetch: any = <T, V>(
   }, []);
 
   return { resource: resourceRef.current, refetch };
-};
-
-/**
- * For fetching related to state
- *
- * @example
- *   const { resource, refetch } = useFetch(fetchApi, accountID, amount);
- */
-const useFetch: UseFetch = _useFetch;
+}
 
 /**
  * For call fetching any time you want
@@ -94,9 +85,9 @@ const useFetch: UseFetch = _useFetch;
  *     refetch({ id: 20 });
  *   }
  */
-function useFetchCallback<T, V>(
+const useFetchCallback: UseFetchCallback = <T, V>(
   fetchFunc: (...param: V[]) => Promise<T>,
-): FetchCallbackResponse<T, V> {
+): FetchCallbackResponse<T, V> => {
   const fetchRef = useRef(fetchFunc);
 
   if (fetchRef.current !== fetchFunc) {
@@ -119,7 +110,7 @@ function useFetchCallback<T, V>(
   }, []);
 
   return { resource, refetch, clear };
-}
+};
 
 function useFetching<T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,

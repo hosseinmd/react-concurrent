@@ -3,19 +3,19 @@ import React, { createContext, useMemo, useContext } from "react";
 import { useFetch } from "./fetch";
 import { useResource, ResourceResponse } from "./resource";
 
-type Refetch<P> = (props: P) => void;
+type Refetch = () => void;
 
 interface FetchContext<P, V> {
   Provider: React.FC<P>;
   useResource: ResourceResponse<V>;
-  useRefetch(): Refetch<P>;
+  useRefetch(): Refetch;
 }
 
 function createFetchContext<V, P>(
   fetchFun: (props: P) => Promise<V>,
 ): FetchContext<P, V> {
   const Context = createContext<ResourceResponse<V> | null>(null);
-  const ContextRefetch = createContext<Refetch<P>>(() => {});
+  const ContextRefetch = createContext<Refetch>(() => {});
 
   /** @param {V} props */
   // @ts-ignore
