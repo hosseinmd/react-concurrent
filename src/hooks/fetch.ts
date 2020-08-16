@@ -19,17 +19,38 @@ interface FetchCallbackResponse<T, V> {
   refetch: (...arg: V[]) => void;
   clear: () => void;
 }
+interface FetchCallbackResponseV<T, V> {
+  resource: Resource<T>;
+  refetch: (arg: V) => void;
+  clear: () => void;
+}
 
-/**
- * For fetching related to state
- *
- * @example
- *   const [resource, refetch] = useFetch(fetchApi, accountID, amount);
- */
-function useFetch<T, V>(
+interface FetchCallbackResponseV2<T, V1, V2> {
+  resource: Resource<T>;
+  refetch: (v1: V1, v2: V2) => void;
+  clear: () => void;
+}
+
+type UseFetch = {
+  <T, V>(
+    fetchFunc: (param: V) => Promise<T>,
+    param: V,
+  ): FetchCallbackResponseV<T, V>,
+  <T, V1, V2>(
+    fetchFunc: (v1: V1, v2: V2) => Promise<T>,
+    v1: V1,
+    v2: V2,
+  ): FetchCallbackResponseV2<T, V1, V2>,
+  <T, V>(
+    fetchFunc: (...param: V[]) => Promise<T>,
+    ...param: V[]
+  ): FetchCallbackResponse<T, V>,
+};
+
+const _useFetch: any = <T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,
   ...arg: V[]
-): FetchResponse<T> {
+): FetchResponse<T> => {
   const [, forceUpdate] = useState({});
 
   const argRef = useRef<V[]>([]);
@@ -48,7 +69,15 @@ function useFetch<T, V>(
   }, []);
 
   return { resource: resourceRef.current, refetch };
-}
+};
+
+/**
+ * For fetching related to state
+ *
+ * @example
+ *   const { resource, refetch } = useFetch(fetchApi, accountID, amount);
+ */
+const useFetch: UseFetch = _useFetch;
 
 /**
  * For call fetching any time you want
