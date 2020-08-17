@@ -6,18 +6,7 @@ import {
   RESOURCE_PENDING,
   Resource,
 } from "../resource";
-
-/**
- * Is a boolean. It’s React’s way of informing us whether we’re waiting.
- *
- * @typedef {boolean} IsLoading
- */
-
-export interface ResourceResponse<T> {
-  data: T;
-  isLoading: boolean;
-  error: Error;
-}
+import { UseResourceResponse } from "./types";
 
 interface ResourcesResponse<T> {
   data: T[];
@@ -31,7 +20,7 @@ interface ResourcesResponse<T> {
  * @example
  *   const { data = [], isLoading, error } = useResource(resource, onError);
  */
-function useResource<V>(resource: Resource<V>): ResourceResponse<V> {
+function useResource<V>(resource: Resource<V>): UseResourceResponse<V> {
   let [, forceUpdate] = useState({});
 
   let { data, error, isLoading } = _destructorResource(resource);
@@ -115,7 +104,7 @@ function _destructorResource(source: Resource<any>) {
 
 function _listenerToResource(
   resource: Resource<any>,
-  resolved: ResourceResponse<any>,
+  resolved: UseResourceResponse<any>,
   callback: () => void,
 ) {
   if (

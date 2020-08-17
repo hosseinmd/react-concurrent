@@ -8,6 +8,7 @@ import {
 } from "../resource";
 import { useResource } from "./resource";
 import { isEqual } from "lodash-es";
+import { UseResourceResponse } from "./types";
 
 interface FetchResponse<T> {
   resource: Resource<T>;
@@ -19,13 +20,41 @@ interface FetchCallbackResponse<T> {
   refetch: () => void;
   clear: () => void;
 }
+interface FetchCallbackResponseArray<T, V> {
+  resource: Resource<T>;
+  refetch: (...arg: V[]) => void;
+  clear: () => void;
+}
+interface FetchCallbackResponseV<T, V> {
+  resource: Resource<T>;
+  refetch: (arg: V) => void;
+  clear: () => void;
+}
+
+interface FetchCallbackResponseV2<T, V1, V2> {
+  resource: Resource<T>;
+  refetch: (v1: V1, v2: V2) => void;
+  clear: () => void;
+}
+
+type UseFetchCallback = {
+  <T>(fetchFunc: () => Promise<T>): FetchCallbackResponse<T>,
+  <T, V>(fetchFunc: (param: V) => Promise<T>): FetchCallbackResponseV<T, V>,
+  <T, V1, V2>(
+    fetchFunc: (v1: V1, v2: V2) => Promise<T>,
+  ): FetchCallbackResponseV2<T, V1, V2>,
+  <T, V>(
+    fetchFunc: (...param: V[]) => Promise<T>,
+  ): FetchCallbackResponseArray<T, V>,
+};
 
 /**
  * For fetching related to state
  *
  * @example
- *   const [resource, refetch] = useFetch(fetchApi, accountID, amount);
+ *   const { resource, refetch } = useFetch(fetchApi, accountID, amount);
  */
+
 function useFetch<T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,
   ...arg: V[]
@@ -65,9 +94,9 @@ function useFetch<T, V>(
  *     refetch({ id: 20 });
  *   }
  */
-function useFetchCallback<T, V>(
+const useFetchCallback: UseFetchCallback = <T, V>(
   fetchFunc: (...param: V[]) => Promise<T>,
-): FetchCallbackResponse<T> {
+): FetchCallbackResponseArray<T, V> => {
   const fetchRef = useRef(fetchFunc);
 
   if (fetchRef.current !== fetchFunc) {
@@ -90,12 +119,12 @@ function useFetchCallback<T, V>(
   }, []);
 
   return { resource, refetch, clear };
-}
+};
 
 function useFetching<T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,
   ...arg: V[]
-): ReturnType<typeof useResource> {
+): UseResourceResponse<T> {
   const { resource } = useFetch(fetchFunc, ...arg);
   return useResource(resource);
 }
