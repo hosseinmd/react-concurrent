@@ -8,6 +8,7 @@ import {
 } from "../resource";
 import { useResource } from "./resource";
 import { isEqual } from "lodash-es";
+import { UseResourceResponse } from "./types";
 
 interface FetchResponse<T> {
   resource: Resource<T>;
@@ -123,7 +124,7 @@ const useFetchCallback: UseFetchCallback = <T, V>(
 function useFetching<T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,
   ...arg: V[]
-): ReturnType<typeof useResource> {
+): UseResourceResponse<T> {
   const { resource } = useFetch(fetchFunc, ...arg);
   return useResource(resource);
 }
