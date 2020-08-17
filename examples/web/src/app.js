@@ -4,7 +4,7 @@ import {
   useFetch,
   useResource,
   useFetchCallback,
-} from "../../../src";
+} from "../../../lib";
 
 export default () => {
   const { data, isLoading, error } = useFetching(() =>
@@ -34,7 +34,9 @@ function TestFetch() {
   const { data, isLoading, error } = useResource(resource);
   return (
     <>
-      <div>{isLoading ? "is loading ... " : JSON.stringify(data)}</div>
+      <div style={{ maxHeight: 100, overflow: "hidden" }}>
+        {isLoading ? "is loading ... " : JSON.stringify(data)}
+      </div>
       <p>{error?.message ?? ""}</p>
     </>
   );
