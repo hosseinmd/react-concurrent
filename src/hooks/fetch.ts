@@ -14,7 +14,12 @@ interface FetchResponse<T> {
   refetch: () => void;
 }
 
-interface FetchCallbackResponse<T, V> {
+interface FetchCallbackResponse<T> {
+  resource: Resource<T>;
+  refetch: () => void;
+  clear: () => void;
+}
+interface FetchCallbackResponseArray<T, V> {
   resource: Resource<T>;
   refetch: (...arg: V[]) => void;
   clear: () => void;
@@ -32,11 +37,14 @@ interface FetchCallbackResponseV2<T, V1, V2> {
 }
 
 type UseFetchCallback = {
+  <T>(fetchFunc: () => Promise<T>): FetchCallbackResponse<T>,
   <T, V>(fetchFunc: (param: V) => Promise<T>): FetchCallbackResponseV<T, V>,
   <T, V1, V2>(
     fetchFunc: (v1: V1, v2: V2) => Promise<T>,
   ): FetchCallbackResponseV2<T, V1, V2>,
-  <T, V>(fetchFunc: (...param: V[]) => Promise<T>): FetchCallbackResponse<T, V>,
+  <T, V>(
+    fetchFunc: (...param: V[]) => Promise<T>,
+  ): FetchCallbackResponseArray<T, V>,
 };
 
 /**
@@ -87,7 +95,7 @@ function useFetch<T, V>(
  */
 const useFetchCallback: UseFetchCallback = <T, V>(
   fetchFunc: (...param: V[]) => Promise<T>,
-): FetchCallbackResponse<T, V> => {
+): FetchCallbackResponseArray<T, V> => {
   const fetchRef = useRef(fetchFunc);
 
   if (fetchRef.current !== fetchFunc) {
