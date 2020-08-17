@@ -1,52 +1,20 @@
-//@ts-check
 import { useRef, useCallback, useState } from "react";
-import {
-  createResource,
-  RESOURCE_PENDING,
-  RESOURCE_REJECTED,
-  Resource,
-} from "../resource";
+import { createResource } from "../resource";
 import { useResource } from "./resource";
 import { isEqual } from "lodash-es";
-import { UseResourceResponse } from "./types";
+import {
+  UseResourceResponse,
+  Resource,
+  UseFetchCallback,
+  FetchCallbackResponseArray,
+  RESOURCE_PENDING,
+  RESOURCE_REJECTED,
+} from "../types";
 
 interface FetchResponse<T> {
   resource: Resource<T>;
   refetch: () => void;
 }
-
-interface FetchCallbackResponse<T> {
-  resource: Resource<T>;
-  refetch: () => void;
-  clear: () => void;
-}
-interface FetchCallbackResponseArray<T, V> {
-  resource: Resource<T>;
-  refetch: (...arg: V[]) => void;
-  clear: () => void;
-}
-interface FetchCallbackResponseV<T, V> {
-  resource: Resource<T>;
-  refetch: (arg: V) => void;
-  clear: () => void;
-}
-
-interface FetchCallbackResponseV2<T, V1, V2> {
-  resource: Resource<T>;
-  refetch: (v1: V1, v2: V2) => void;
-  clear: () => void;
-}
-
-type UseFetchCallback = {
-  <T>(fetchFunc: () => Promise<T>): FetchCallbackResponse<T>,
-  <T, V>(fetchFunc: (param: V) => Promise<T>): FetchCallbackResponseV<T, V>,
-  <T, V1, V2>(
-    fetchFunc: (v1: V1, v2: V2) => Promise<T>,
-  ): FetchCallbackResponseV2<T, V1, V2>,
-  <T, V>(
-    fetchFunc: (...param: V[]) => Promise<T>,
-  ): FetchCallbackResponseArray<T, V>,
-};
 
 /**
  * For fetching related to state
@@ -63,7 +31,7 @@ function useFetch<T, V>(
 
   const argRef = useRef<V[]>([]);
   const resourceRef = useRef<Resource<any> | null>(null);
-  let isArgChanged = isEqual(argRef.current, arg);
+  const isArgChanged = isEqual(argRef.current, arg);
 
   if (!isArgChanged || resourceRef.current === null) {
     argRef.current = arg;
@@ -129,7 +97,10 @@ function useFetching<T, V>(
   return useResource(resource);
 }
 
-function useFetchInfinite(fetchFunc: (arg: any) => any, { limit = 30 } = {}) {
+function useFetchInfinite(
+  fetchFunc: (arg: any) => Promise<any[]>,
+  { limit = 30 } = {},
+) {
   const skipRef = useRef(0);
   const [resources, setResource] = useState(() => {
     const source = createResource(() => fetchFunc({ limit, skip: 0 }));
@@ -152,8 +123,8 @@ function useFetchInfinite(fetchFunc: (arg: any) => any, { limit = 30 } = {}) {
 
       return;
     }
-
-    if (resources[resources.length - 1].value <= 0) {
+    //@ts-ignore
+    if (resources[resources.length - 1].value?.length <= 0) {
       return;
     }
 

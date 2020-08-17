@@ -1,12 +1,11 @@
-//@ts-check
 import { useState, useLayoutEffect } from "react";
 import {
+  UseResourceResponse,
+  Resource,
   RESOURCE_RESOLVED,
   RESOURCE_REJECTED,
   RESOURCE_PENDING,
-  Resource,
-} from "../resource";
-import { UseResourceResponse } from "./types";
+} from "../types";
 
 interface ResourcesResponse<T> {
   data: T[];
@@ -21,9 +20,9 @@ interface ResourcesResponse<T> {
  *   const { data = [], isLoading, error } = useResource(resource, onError);
  */
 function useResource<V>(resource: Resource<V>): UseResourceResponse<V> {
-  let [, forceUpdate] = useState({});
+  const [, forceUpdate] = useState({});
 
-  let { data, error, isLoading } = _destructorResource(resource);
+  const { data, error, isLoading } = _destructorResource(resource);
 
   useLayoutEffect(() => {
     let destructed = false;
@@ -45,10 +44,12 @@ function useResource<V>(resource: Resource<V>): UseResourceResponse<V> {
  * This function allow to use resources list without React.Suspense.
  *
  * @example
- *   const [data = [], isLoading, error] = useResource(resource, onError);
+ *   const { data = [], isLoading, error } = useResource(resource, onError);
+ *
+ * @todo Is experimental
  */
 function useResources<V>(resources: Resource<V>[]): ResourcesResponse<V> {
-  let [, forceUpdate] = useState({});
+  const [, forceUpdate] = useState({});
   const resolved = resources.map(_destructorResource);
 
   useLayoutEffect(() => {

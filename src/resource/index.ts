@@ -1,19 +1,10 @@
 import * as React from "react";
-
-const RESOURCE_PENDING = 0;
-const RESOURCE_RESOLVED = 1;
-const RESOURCE_REJECTED = 2;
-
-export type Resource<V> = {
-  read(): V | undefined,
-  preload(): void,
-  status:
-    | typeof RESOURCE_PENDING
-    | typeof RESOURCE_RESOLVED
-    | typeof RESOURCE_REJECTED
-    | undefined,
-  value: Promise<V> | any,
-};
+import {
+  Resource,
+  RESOURCE_PENDING,
+  RESOURCE_REJECTED,
+  RESOURCE_RESOLVED,
+} from "../types";
 
 const ReactCurrentDispatcher =
   // @ts-ignore
@@ -83,7 +74,8 @@ function createResource<V>(fetch: () => Promise<V>): Resource<V> {
           throw suspender;
         }
         case RESOURCE_RESOLVED: {
-          const value = result.value;
+          // eslint-disable-next-line prettier/prettier
+          const value = result.value as V;
           return value;
         }
         case RESOURCE_REJECTED: {
@@ -106,7 +98,4 @@ function createResource<V>(fetch: () => Promise<V>): Resource<V> {
 
 export {
   createResource,
-  RESOURCE_PENDING,
-  RESOURCE_REJECTED,
-  RESOURCE_RESOLVED,
 };

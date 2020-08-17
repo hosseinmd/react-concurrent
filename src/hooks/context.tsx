@@ -1,8 +1,7 @@
-//@ts-check
 import React, { createContext, useMemo, useContext } from "react";
 import { useFetch } from "./fetch";
 import { useResource } from "./resource";
-import { UseResourceResponse } from "./types";
+import { UseResourceResponse } from "../types";
 
 type Refetch = () => void;
 
