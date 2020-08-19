@@ -4,6 +4,7 @@ import {
   useFetch,
   useResource,
   useFetchCallback,
+  useFetchingCallback,
 } from "../../../lib";
 
 export default () => {
@@ -15,11 +16,16 @@ export default () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <div>{isLoading ? "is loading ... " : JSON.stringify(data)}</div>
+      <div>
+        {isLoading
+          ? "is loading ... "
+          : (JSON.stringify(data) || "").slice(0, 100)}
+      </div>
       <p>{error?.message ?? ""}</p>
 
       <TestFetch />
       <TestFetchCallback />
+      <TestFetchingCallback />
     </div>
   );
 };
@@ -34,8 +40,10 @@ function TestFetch() {
   const { data, isLoading, error } = useResource(resource);
   return (
     <>
-      <div style={{ maxHeight: 100, overflow: "hidden" }}>
-        {isLoading ? "is loading ... " : JSON.stringify(data)}
+      <div style={{ height: 100, overflow: "hidden" }}>
+        {isLoading
+          ? "is loading ... "
+          : (JSON.stringify(data) || "").slice(0, 100)}
       </div>
       <p>{error?.message ?? ""}</p>
     </>
@@ -59,7 +67,37 @@ function TestFetchCallback() {
       >
         start fetch
       </button>
-      <div>{isLoading ? "is loading ... " : JSON.stringify(data)}</div>
+      <div style={{ height: 100 }}>
+        {isLoading
+          ? "is loading ... "
+          : (JSON.stringify(data) || "").slice(0, 100)}
+      </div>
+      <p>{error?.message ?? ""}</p>
+    </>
+  );
+}
+
+function TestFetchingCallback() {
+  const { data, isLoading, error, refetch } = useFetchingCallback(() =>
+    fetch("https://gorest.co.in/public-api/users", {
+      method: "GET",
+    }).then((r) => r.json()),
+  );
+
+  return (
+    <>
+      <button
+        onClick={() => refetch()}
+        style={{ width: 100, height: 40 }}
+        title="start fetch"
+      >
+        start fetch
+      </button>
+      <div style={{ height: 100 }}>
+        {isLoading
+          ? "is loading ... "
+          : (JSON.stringify(data) || "").slice(0, 100)}
+      </div>
       <p>{error?.message ?? ""}</p>
     </>
   );

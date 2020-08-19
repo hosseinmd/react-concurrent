@@ -74,7 +74,6 @@ function createResource<V>(fetch: () => Promise<V>): Resource<V> {
           throw suspender;
         }
         case RESOURCE_RESOLVED: {
-          // eslint-disable-next-line prettier/prettier
           const value = result.value as V;
           return value;
         }
@@ -96,6 +95,4 @@ function createResource<V>(fetch: () => Promise<V>): Resource<V> {
   return resource;
 }
 
-export {
-  createResource,
-};
+export { createResource };

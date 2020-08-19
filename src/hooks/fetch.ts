@@ -9,6 +9,9 @@ import {
   FetchCallbackResponseArray,
   RESOURCE_PENDING,
   RESOURCE_REJECTED,
+  UseFetchingCallback,
+  FetchingCallbackResponseArray,
+  UseFetching,
 } from "../types";
 
 interface FetchResponse<T> {
@@ -70,7 +73,7 @@ const useFetchCallback: UseFetchCallback = <T, V>(
   if (fetchRef.current !== fetchFunc) {
     fetchRef.current = fetchFunc;
   }
-  const [resource, setResource] = useState(
+  const [resource, setResource] = useState(() =>
     createResource<any>(async () => undefined),
   );
 
@@ -89,13 +92,21 @@ const useFetchCallback: UseFetchCallback = <T, V>(
   return { resource, refetch, clear };
 };
 
-function useFetching<T, V>(
+const useFetchingCallback: UseFetchingCallback = <T, V>(
+  fetchFunc: (...param: V[]) => Promise<T>,
+): FetchingCallbackResponseArray<T, V> => {
+  const { resource, refetch } = useFetchCallback(fetchFunc);
+  const { data, error, isLoading } = useResource(resource);
+  return { data, error, isLoading, refetch };
+};
+
+const useFetching: UseFetching = <T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,
   ...arg: V[]
-): UseResourceResponse<T> {
+): UseResourceResponse<T> => {
   const { resource } = useFetch(fetchFunc, ...arg);
   return useResource(resource);
-}
+};
 
 function useFetchInfinite(
   fetchFunc: (arg: any) => Promise<any[]>,
@@ -143,4 +154,10 @@ function useFetchInfinite(
   return { resources, fetchMore, unstable_refresh };
 }
 
-export { useFetchInfinite, useFetch, useFetching, useFetchCallback };
+export {
+  useFetchInfinite,
+  useFetch,
+  useFetching,
+  useFetchCallback,
+  useFetchingCallback,
+};

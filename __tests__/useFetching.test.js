@@ -1,3 +1,4 @@
+//@ts-check
 import renderer, { act } from "react-test-renderer";
 import React from "react";
 import { useFetching } from "../lib";
@@ -12,6 +13,7 @@ function fetchMock() {
 
 function Tester() {
   const { data, isLoading, error } = useFetching(fetchMock);
+  // @ts-ignore
   return <p {...{ data, isLoading, error }} />;
 }
 
@@ -31,12 +33,3 @@ test("store: create theme store", async () => {
     });
   });
 });
-
-// test("store: toggle theme", () => {
-//   act(async () => {
-//     return new Promise(() => {});
-//   });
-
-//   tree = component.toJSON();
-//   expect(tree).toMatchSnapshot();
-// });
