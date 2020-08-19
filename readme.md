@@ -14,6 +14,7 @@ This is tested on huge project. Everything is stable. but we are improving that.
 
 - [install](#install)
 - [useFetching](#useFetching)
+- [useFetchingCallback](#useFetchingCallback)
 - [useFetch](#useFetch)
 - [useFetchCallback](#useFetchCallback)
 - [createFetchContext](#createFetchContext)
@@ -34,6 +35,27 @@ import { useFetching } from "react-concurrent";
 const app = () => {
   const { data, isLoading, error } = useFetching(() =>
     fetch("http://example.com"),
+  );
+};
+```
+
+### useFetchingCallback
+
+useFetchingCallback doesn't fetching until call refetch
+
+```js
+import { useFetchingCallback } from "react-concurrent";
+
+const app = () => {
+  const { data, isLoading, error, refetch } = useFetchingCallback(() =>
+    fetch("http://example.com/"),
+  );
+
+  return (
+    <>
+      <Button onPress={() => refetch()} title="start fetch" />
+      {isLoading? 'Is loading ...':data}
+    </>
   );
 };
 ```
