@@ -103,9 +103,9 @@ const useFetchingCallback: UseFetchingCallback = <T, V>(
 const useFetching: UseFetching = <T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,
   ...arg: V[]
-): UseResourceResponse<T> => {
-  const { resource } = useFetch(fetchFunc, ...arg);
-  return useResource(resource);
+): UseResourceResponse<T> & { refetch: any } => {
+  const { resource, refetch } = useFetch(fetchFunc, ...arg);
+  return { ...useResource(resource), refetch };
 };
 
 function useFetchInfinite(
