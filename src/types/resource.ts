@@ -16,7 +16,7 @@ export type Resource<V> = {
 };
 
 export interface UseResourceResponse<T> {
-  data: T;
+  data: T | undefined;
   isLoading: boolean;
-  error: Error;
+  error: Error | undefined;
 }
