@@ -12,6 +12,7 @@ import {
   UseFetchingCallback,
   FetchingCallbackResponseArray,
   UseFetching,
+  FetchingResponseArray,
 } from "../types";
 
 interface FetchResponse<T> {
@@ -99,17 +100,11 @@ const useFetchingCallback: UseFetchingCallback = <T, V>(
   const { data, error, isLoading } = useResource(resource);
   return { data, error, isLoading, refetch };
 };
-interface UseFetchingResponse<T> {
-  data: T;
-  isLoading: boolean;
-  error: Error;
-  refetch: () => void;
-}
 
 const useFetching: UseFetching = <T, V>(
   fetchFunc: (...arg: V[]) => Promise<T>,
   ...arg: V[]
-): UseFetchingResponse<T> => {
+): FetchingResponseArray<T, V> => {
   const { resource, refetch } = useFetch(fetchFunc, ...arg);
   const { data, error, isLoading } = useResource(resource);
   return { data, error, isLoading, refetch };
