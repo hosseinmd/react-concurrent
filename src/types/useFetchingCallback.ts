@@ -1,8 +1,8 @@
 import { UseResourceResponse } from "./resource";
-import { ThenArg } from "./utils";
+import { AsyncReturnType } from "./utils";
 
 export interface FetchingCallbackResponse<T extends (...args: any) => any>
-  extends UseResourceResponse<ThenArg<T>> {
+  extends UseResourceResponse<AsyncReturnType<T>> {
   refetch: (...args: Parameters<T>) => void;
 }
 

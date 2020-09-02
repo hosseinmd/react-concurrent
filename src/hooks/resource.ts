@@ -6,6 +6,7 @@ import {
   RESOURCE_REJECTED,
   RESOURCE_PENDING,
 } from "../types";
+import { AsyncReturnType } from "../types/utils";
 
 interface ResourcesResponse<T> {
   data: T[];
@@ -19,7 +20,9 @@ interface ResourcesResponse<T> {
  * @example
  *   const { data = [], isLoading, error } = useResource(resource, onError);
  */
-function useResource<V>(resource: Resource<V>): UseResourceResponse<V> {
+function useResource<V extends (...args: any) => any>(
+  resource: Resource<V>,
+): UseResourceResponse<AsyncReturnType<V>> {
   const [, forceUpdate] = useState({});
 
   const { data, error, isLoading } = _destructorResource(resource);
@@ -48,7 +51,9 @@ function useResource<V>(resource: Resource<V>): UseResourceResponse<V> {
  *
  * @todo Is experimental
  */
-function useResources<V>(resources: Resource<V>[]): ResourcesResponse<V> {
+function useResources<V extends (...args: any) => any>(
+  resources: Resource<V>[],
+): ResourcesResponse<AsyncReturnType<V>> {
   const [, forceUpdate] = useState({});
   const resolved = resources.map(_destructorResource);
 

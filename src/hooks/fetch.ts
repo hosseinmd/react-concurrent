@@ -3,18 +3,15 @@ import { createResource } from "../resource";
 import { useResource } from "./resource";
 import { isEqual } from "lodash-es";
 import {
-  UseResourceResponse,
   Resource,
-  UseFetchCallback,
-  FetchCallbackResponseArray,
   RESOURCE_PENDING,
   RESOURCE_REJECTED,
   UseFetchingCallback,
-  FetchingCallbackResponseArray,
   UseFetching,
+  UseFetchCallback,
 } from "../types";
 
-interface FetchResponse<T> {
+interface FetchResponse<T extends (...args: any) => any> {
   resource: Resource<T>;
   refetch: () => void;
 }
@@ -26,13 +23,13 @@ interface FetchResponse<T> {
  *   const { resource, refetch } = useFetch(fetchApi, accountID, amount);
  */
 
-function useFetch<T, V>(
-  fetchFunc: (...arg: V[]) => Promise<T>,
-  ...arg: V[]
+function useFetch<T extends (...args: any) => any>(
+  fetchFunc: T,
+  ...arg: Parameters<T>[]
 ): FetchResponse<T> {
   const [, forceUpdate] = useState({});
 
-  const argRef = useRef<V[]>([]);
+  const argRef = useRef<any[]>([]);
   const resourceRef = useRef<Resource<any> | null>(null);
   const isArgChanged = isEqual(argRef.current, arg);
 
@@ -65,9 +62,7 @@ function useFetch<T, V>(
  *     refetch({ id: 20 });
  *   }
  */
-const useFetchCallback: UseFetchCallback = <T, V>(
-  fetchFunc: (...param: V[]) => Promise<T>,
-): FetchCallbackResponseArray<T, V> => {
+const useFetchCallback: UseFetchCallback = (fetchFunc) => {
   const fetchRef = useRef(fetchFunc);
 
   if (fetchRef.current !== fetchFunc) {
@@ -92,20 +87,15 @@ const useFetchCallback: UseFetchCallback = <T, V>(
   return { resource, refetch, clear };
 };
 
-const useFetchingCallback: UseFetchingCallback = <T, V>(
-  fetchFunc: (...param: V[]) => Promise<T>,
-): FetchingCallbackResponseArray<T, V> => {
+const useFetchingCallback: UseFetchingCallback = (fetchFunc) => {
   const { resource, refetch } = useFetchCallback(fetchFunc);
   const { data, error, isLoading } = useResource(resource);
   return { data, error, isLoading, refetch };
 };
 
-const useFetching: UseFetching = <T, V>(
-  fetchFunc: (...arg: V[]) => Promise<T>,
-  ...arg: V[]
-): UseResourceResponse<T> & { refetch: any } => {
+const useFetching: UseFetching = (fetchFunc, ...arg) => {
   const { resource, refetch } = useFetch(fetchFunc, ...arg);
-  return { ...useResource(resource), refetch };
+  return { ...useResource<any>(resource), refetch };
 };
 
 function useFetchInfinite(

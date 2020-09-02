@@ -5,6 +5,7 @@ import {
   RESOURCE_REJECTED,
   RESOURCE_RESOLVED,
 } from "../types";
+import { AsyncReturnType } from "../types/utils";
 
 const ReactCurrentDispatcher =
   // @ts-ignore
@@ -25,19 +26,19 @@ function readContext(Context: React.Context<any>) {
 
 const CacheContext = React.createContext(null);
 
-function accessResult<V>(
-  resource: Resource<V>,
-  fetch: () => Promise<V>,
-): Resource<V> {
+function accessResult<T extends (...args: any) => any>(
+  resource: Resource<T>,
+  fetch: T,
+): Resource<T> {
   function getResult() {
-    const thenable = fetch().catch((error) => {
+    const thenable = fetch().catch((error: any) => {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_REJECTED;
         resource.value = error;
       }
     });
 
-    thenable.then((value) => {
+    thenable.then((value: AsyncReturnType<T>) => {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_RESOLVED;
         resource.value = value;
@@ -58,8 +59,10 @@ function accessResult<V>(
   }
 }
 
-function createResource<V>(fetch: () => Promise<V>): Resource<V> {
-  const resource: Resource<V> = {
+function createResource<T extends (...args: any) => any>(
+  fetch: T,
+): Resource<T> {
+  const resource: Resource<T> = {
     status: undefined,
     value: undefined,
     read() {
@@ -74,7 +77,7 @@ function createResource<V>(fetch: () => Promise<V>): Resource<V> {
           throw suspender;
         }
         case RESOURCE_RESOLVED: {
-          const value = result.value as V;
+          const value = result.value as AsyncReturnType<T>;
           return value;
         }
         case RESOURCE_REJECTED: {

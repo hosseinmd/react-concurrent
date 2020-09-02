@@ -2,6 +2,7 @@ import React, { createContext, useMemo, useContext } from "react";
 import { useFetch } from "./fetch";
 import { useResource } from "./resource";
 import { UseResourceResponse } from "../types";
+import { AsyncReturnType } from "../types/utils";
 
 type Refetch = () => void;
 
@@ -11,26 +12,22 @@ interface FetchContext<P, V> {
   useRefetch(): Refetch;
 }
 
-function createFetchContext<V, P>(
-  fetchFun: (props: P) => Promise<V>,
-): FetchContext<P, V> {
-  const Context = createContext<UseResourceResponse<V> | null>(null);
+function createFetchContext<T extends (...args: any) => any>(
+  fetchFun: T,
+): FetchContext<Parameters<T>, AsyncReturnType<T>> {
+  const Context = createContext<UseResourceResponse<AsyncReturnType<T>>>(
+    null as any,
+  );
   const ContextRefetch = createContext<Refetch>(() => {});
 
-  /** @param {V} props */
-  // @ts-ignore
-  function Provider({ children, ...props }) {
-    // @ts-ignore
-    const { resource, refetch } = useFetch(fetchFun, props);
-    const { data, isLoading, error } = useResource(resource);
+  function Provider({ children, ...props }: Parameters<T>) {
+    const { resource, refetch } = useFetch(fetchFun, props as Parameters<T>);
+    const resourceResponse = useResource(resource);
 
     const value = useMemo(
-      () => ({
-        data,
-        isLoading,
-        error,
-      }),
-      [data, isLoading, error],
+      () => resourceResponse,
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      Object.values(resourceResponse),
     );
 
     return (
