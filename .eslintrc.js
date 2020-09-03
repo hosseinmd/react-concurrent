@@ -4,5 +4,6 @@ module.exports = {
     "@react-native-community",
     "prettier",
     "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:react-hooks/recommended",
   ],
 };
