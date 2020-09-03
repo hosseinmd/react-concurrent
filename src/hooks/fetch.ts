@@ -69,7 +69,7 @@ const useFetchCallback: UseFetchCallback = (fetchFunc) => {
     fetchRef.current = fetchFunc;
   }
   const [resource, setResource] = useState(() =>
-    createResource<any>(async () => undefined),
+    createResource<any>(() => undefined),
   );
 
   const refetch = useCallback((...arg) => {

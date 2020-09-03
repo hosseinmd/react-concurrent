@@ -6,6 +6,7 @@ import {
   RESOURCE_RESOLVED,
 } from "../types";
 import { AsyncReturnType } from "../types/utils";
+import { isPromise } from "./utils";
 
 const ReactCurrentDispatcher =
   // @ts-ignore
@@ -26,19 +27,39 @@ function readContext(Context: React.Context<any>) {
 
 const CacheContext = React.createContext(null);
 
-function accessResult<T extends (...args: any) => any>(
-  resource: Resource<T>,
-  fetch: T,
-): Resource<T> {
-  function getResult() {
-    const thenable = fetch().catch((error: any) => {
+function getResult(resource: Resource<any>, fetch: () => any) {
+  // if (isAsyncFunction(fetch)) {
+  //   const thenable = fetch().catch((error: any) => {
+  //     if (resource.status === RESOURCE_PENDING) {
+  //       resource.status = RESOURCE_REJECTED;
+  //       resource.value = error;
+  //     }
+  //   });
+
+  //   thenable.then((value: any) => {
+  //     if (resource.status === RESOURCE_PENDING) {
+  //       resource.status = RESOURCE_RESOLVED;
+  //       resource.value = value;
+  //     }
+  //   });
+
+  //   resource.status = RESOURCE_PENDING;
+  //   resource.value = thenable;
+
+  //   return resource;
+  // }
+
+  const result = fetch();
+
+  if (isPromise(result)) {
+    const thenable = result.catch((error: any) => {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_REJECTED;
         resource.value = error;
       }
     });
 
-    thenable.then((value: AsyncReturnType<T>) => {
+    thenable.then((value: any) => {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_RESOLVED;
         resource.value = value;
@@ -51,8 +72,18 @@ function accessResult<T extends (...args: any) => any>(
     return resource;
   }
 
+  resource.status = RESOURCE_RESOLVED;
+  resource.value = result;
+
+  return resource;
+}
+
+function accessResult<T extends (...args: any) => any>(
+  resource: Resource<T>,
+  fetch: T,
+): Resource<T> {
   if (resource.status === undefined) {
-    const newResult = getResult();
+    const newResult = getResult(resource, fetch);
     return newResult;
   } else {
     return resource;

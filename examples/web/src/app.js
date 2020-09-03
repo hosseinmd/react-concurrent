@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   useFetching,
   useFetch,
@@ -50,14 +50,16 @@ function TestFetch() {
   );
 }
 
-function TestFetchCallback() {
-  const { resource, refetch } = useFetchCallback(() =>
-    fetch("https://gorest.co.in/public-api/users", {
+const TestFetchCallback = memo(() => {
+  const { resource, refetch } = useFetchCallback(async () => {
+    const r = await fetch("https://gorest.co.in/public-api/users", {
       method: "GET",
-    }).then((r) => r.json()),
-  );
+    });
+    return await r.json();
+  });
 
   const { data, isLoading, error } = useResource(resource);
+
   return (
     <>
       <button
@@ -75,7 +77,7 @@ function TestFetchCallback() {
       <p>{error?.message ?? ""}</p>
     </>
   );
-}
+});
 
 function TestFetchingCallback() {
   const { data, isLoading, error, refetch } = useFetchingCallback(() =>
