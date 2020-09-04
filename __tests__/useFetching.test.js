@@ -17,7 +17,7 @@ function Tester() {
   return <p {...{ data, isLoading, error }} />;
 }
 
-test("store: create theme store", async () => {
+test("useFetching", async () => {
   const component = renderer.create(<Tester />);
 
   let tree = component.toJSON();
