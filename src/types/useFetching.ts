@@ -7,5 +7,5 @@ type UseFetchingResponse<DATA> = UseResourceResponse<DATA> & {
 
 export type UseFetching = <T extends (...args: any) => any>(
   fetchFunc: T,
-  ...args: Parameters<T>[]
+  ...args: Parameters<T>
 ) => UseFetchingResponse<AsyncReturnType<T>>;

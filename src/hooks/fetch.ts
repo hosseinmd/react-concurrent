@@ -25,7 +25,7 @@ interface FetchResponse<T extends (...args: any) => any> {
 
 function useFetch<T extends (...args: any) => any>(
   fetchFunc: T,
-  ...arg: Parameters<T>[]
+  ...arg: Parameters<T>
 ): FetchResponse<T> {
   const [, forceUpdate] = useState({});
 
@@ -35,7 +35,7 @@ function useFetch<T extends (...args: any) => any>(
 
   if (!isArgChanged || resourceRef.current === null) {
     argRef.current = arg;
-    resourceRef.current = createResource(() => fetchFunc(...arg));
+    resourceRef.current = createResource(() => fetchFunc(...(arg as any)));
     resourceRef.current.preload();
   }
 
