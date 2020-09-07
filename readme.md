@@ -106,32 +106,6 @@ const OtherComponent = ({ resource }) => {
 };
 ```
 
-### createFetchContext
-
-```js
-const CommissionContext = createFetchContext(({ id })=> fetch("http://example.com/"+id));
-
-function App(){
-  const [ id, setId ] = useState(0)
-
-  return(
-    <CommissionContext.Provider id={id} >
-      <OtherComponent/> 
-    </CommissionContext.Provider>
-  )
-}
-
-const OtherComponent = () => {
-  const { data, isLoading, error } = CommissionContext.useResource();
-
-  return (
-    isLoading?
-      <p>Commission is loading...</p>
-      :<p>Commission is {data}</p>
-  )
-};
-```
-
 ### createResource
 
 ```js
