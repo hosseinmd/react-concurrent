@@ -8,7 +8,12 @@ import {
 } from "../../../lib";
 
 export default () => {
-  const { data, isLoading, error } = useFetching(() =>
+  const {
+    data,
+    isLoading,
+    error: { message: errorMessage = "" },
+    refetch,
+  } = useFetching(() =>
     fetch("https://gorest.co.in/public-api/users", {
       method: "GET",
     }).then((r) => r.json()),
@@ -21,7 +26,8 @@ export default () => {
           ? "is loading ... "
           : (JSON.stringify(data) || "").slice(0, 100)}
       </div>
-      <p>{error?.message ?? ""}</p>
+      <p>{errorMessage}</p>
+      {errorMessage && <button onClick={() => refetch()}>Try again</button>}
 
       <TestFetch />
       <TestFetchCallback />
