@@ -32,7 +32,7 @@ useFetching give us directly data after api resolve,
 import { useFetching } from "react-concurrent";
 
 const app = () => {
-  const { data, isLoading, error } = useFetching(() =>
+  const { data, isLoading, error , refetch } = useFetching(() =>
     fetch("http://example.com"),
   );
 };
