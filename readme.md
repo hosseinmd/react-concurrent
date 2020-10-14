@@ -59,18 +59,18 @@ const app = () => {
 };
 ```
 
-### useFetch
+### useCreateResource
 
 useFetch give us a resource, we need to pass that to useResource for get data
 
 ```js
-import { useFetch, useResource } from "react-concurrent";
+import { useCreateResource, useResource } from "react-concurrent";
 
 const fetchApi = id => fetch(`http://example.com/${id}`);
 
 const app = () => {
   const [id, setId] = useState(1); // fetch is calling again if this state changed
-  const { resource } = useFetch(fetchApi, id);
+  const { resource } = useCreateResource(fetchApi, id);
 
   return <OtherComponent {...{ resource }} />;
 };

@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from "react";
+import { useState, useLayoutEffect, useCallback, useRef } from "react";
 import {
   UseResourceResponse,
   Resource,
@@ -7,6 +7,8 @@ import {
   RESOURCE_PENDING,
 } from "../types";
 import { AsyncReturnType } from "../types/utils";
+import { isEqual } from "lodash-es";
+import { createResource } from "../resource";
 
 interface ResourcesResponse<T> {
   data: T[];
@@ -123,4 +125,53 @@ function _listenerToResource(
   }
 }
 
-export { useResource, useResources };
+interface UseCreateResourceResponse<T extends (...args: any) => any> {
+  resource: Resource<T>;
+  refetch: () => void;
+}
+
+/**
+ * A hook for creating resource without preloading
+ *
+ * @example
+ *   const { resource, refetch } = useCreateResource(fetchApi, accountID, amount);
+ *   resource.preload(); // if you need to preload data call this
+ *
+ * @param fetchFunc Promise returned function
+ * @param arg This is fetchFunc arguments, if arguments changed function give
+ *     another resource
+ */
+function useCreateResource<T extends (...args: any) => any>(
+  fetchFunc: T,
+  ...arg: Parameters<T>
+): UseCreateResourceResponse<T> {
+  const [, forceUpdate] = useState({});
+
+  const argRef = useRef<any[]>([]);
+  const funcRef = useRef<T>(fetchFunc);
+  const resourceRef = useRef<Resource<any> | null>(null);
+  const isArgChanged = isEqual(argRef.current, arg);
+
+  if (funcRef.current !== fetchFunc) {
+    funcRef.current = fetchFunc;
+  }
+
+  if (!isArgChanged || resourceRef.current === null) {
+    argRef.current = arg;
+    resourceRef.current = createResource(() => fetchFunc(...(arg as any)));
+  }
+
+  const refetch = useCallback((preload: boolean = true) => {
+    resourceRef.current = createResource(() =>
+      funcRef.current(...(argRef.current as any)),
+    );
+    preload && resourceRef.current.preload();
+    forceUpdate({});
+  }, []);
+
+  return { resource: resourceRef.current, refetch };
+}
+
+export { useResource, useResources, useCreateResource };
+
+export type { UseCreateResourceResponse };

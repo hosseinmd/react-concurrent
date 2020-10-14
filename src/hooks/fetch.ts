@@ -1,7 +1,6 @@
 import { useRef, useCallback, useState } from "react";
 import { createResource } from "../resource";
-import { useResource } from "./resource";
-import { isEqual } from "lodash-es";
+import { useCreateResource, useResource } from "./resource";
 import {
   Resource,
   RESOURCE_PENDING,
@@ -19,32 +18,20 @@ interface FetchResponse<T extends (...args: any) => any> {
 /**
  * For fetching related to state
  *
+ * @deprecated use UseCreateResource
  * @example
- *   const { resource, refetch } = useFetch(fetchApi, accountID, amount);
+ *   const { resource, refetch } = useCreateResource(fetchApi, accountID, amount);
+ *   resource.preload(); // if you need to preload data call this
  */
-
 function useFetch<T extends (...args: any) => any>(
   fetchFunc: T,
   ...arg: Parameters<T>
 ): FetchResponse<T> {
-  const [, forceUpdate] = useState({});
+  const { resource, refetch } = useCreateResource(fetchFunc, ...arg);
 
-  const argRef = useRef<any[]>([]);
-  const resourceRef = useRef<Resource<any> | null>(null);
-  const isArgChanged = isEqual(argRef.current, arg);
+  resource.preload();
 
-  if (!isArgChanged || resourceRef.current === null) {
-    argRef.current = arg;
-    resourceRef.current = createResource(() => fetchFunc(...(arg as any)));
-    resourceRef.current.preload();
-  }
-
-  const refetch = useCallback(() => {
-    resourceRef.current = null;
-    forceUpdate({});
-  }, []);
-
-  return { resource: resourceRef.current, refetch };
+  return { resource, refetch };
 }
 
 /**
