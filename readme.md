@@ -15,7 +15,7 @@ This is tested on huge project. Everything is stable. but we are improving that.
 - [install](#install)
 - [useFetching](#useFetching)
 - [useFetchingCallback](#useFetchingCallback)
-- [useFetch](#useFetch)
+- [useCreateResource](#useCreateResource)
 - [useFetchCallback](#useFetchCallback)
 - [createResource](#createResource)
 - [React_Concurrent_Mode](#React_Concurrent_Mode)
