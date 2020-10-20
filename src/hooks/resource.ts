@@ -125,7 +125,7 @@ function _listenerToResource(
   }
 }
 
-interface UseCreateResourceResponse<T extends (...args: any) => any> {
+export interface UseCreateResourceResponse<T extends (...args: any) => any> {
   resource: Resource<T>;
   refetch: () => void;
 }
@@ -173,5 +173,3 @@ function useCreateResource<T extends (...args: any) => any>(
 }
 
 export { useResource, useResources, useCreateResource };
-
-export type { UseCreateResourceResponse };
