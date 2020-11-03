@@ -1,4 +1,4 @@
-A collection of hooks used for fetching data easily
+A collection of hooks for fetching data easily.
 
 [![NPM](https://nodei.co/npm/react-concurrent.png)](https://nodei.co/npm/react-concurrent/)
 
@@ -6,7 +6,7 @@ A collection of hooks used for fetching data easily
 
 # react-concurrent
 
-The new Render-as-You-Fetch pattern for fetching data. This library aims at implementing relay pattern for async APIs.
+A collection of hooks for fetching data easily.
 
 This is tested on huge project. Everything is stable. but we are improving that. if you have an idea you are so welcome.
 
