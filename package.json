@@ -5,9 +5,10 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
+    "compile": "tsc",
     "prepare": "yarn build",
-    "build": "rm -rf ./lib && tsc",
-    "lint": "eslint --ext '.js' .",
+    "build": "rm -rf ./lib && yarn compile",
+    "lint": "eslint --ext '.ts' ./src",
     "test": "yarn build && jest"
   },
   "repository": {
@@ -64,7 +65,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "yarn lint"
+      "pre-commit": "yarn lint && yarn compile --noEmit"
     }
   }
 }

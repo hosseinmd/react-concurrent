@@ -16,7 +16,6 @@ This is tested on huge project. Everything is stable. but we are improving that.
 - [useFetching](#useFetching)
 - [useFetchingCallback](#useFetchingCallback)
 - [useCreateResource](#useCreateResource)
-- [useFetchCallback](#useFetchCallback)
 - [createResource](#createResource)
 - [React_Concurrent_Mode](#React_Concurrent_Mode)
 
@@ -26,14 +25,37 @@ This is tested on huge project. Everything is stable. but we are improving that.
 
 ### useFetching
 
-useFetching give us directly data after api resolve,
+Get your api data easily by useFetching
 
 ```js
 import { useFetching } from "react-concurrent";
 
 const app = () => {
-  const { data, isLoading, error , refetch } = useFetching(() =>
-    fetch("http://example.com"),
+  const { data, isLoading, error, refetch } = useFetching(() =>
+    fetch("http://example.com").then((res) => res.json()),
+  );
+};
+
+//////// Axios
+// If you are using axios
+const { data, isLoading, error, refetch } = useFetching(async () => {
+  const response = await axios.get("http://example.com");
+  return response.data;
+});
+```
+
+Fetching based on a state change.
+In this example every time query change, api will be call again.
+
+```js
+import { useFetching } from "react-concurrent";
+
+const app = () => {
+  const [query, setQuery] = useState("a query");
+
+  const { data, isLoading, error } = useFetching(
+    () => fetch("http://example.com/search?query=" + query),
+    [query],
   );
 };
 ```
@@ -46,14 +68,14 @@ useFetchingCallback doesn't fetching until call refetch
 import { useFetchingCallback } from "react-concurrent";
 
 const app = () => {
-  const { data, isLoading, error, refetch } = useFetchingCallback(() =>
-    fetch("http://example.com/"),
+  const { data, isLoading, error, refetch } = useFetchingCallback((body) =>
+    fetch("http://example.com/setting", { method: "post", body }),
   );
 
   return (
     <>
-      <Button onPress={() => refetch()} title="start fetch" />
-      {isLoading? 'Is loading ...':data}
+      <Button onPress={() => refetch({ language: "en" })} title="English" />
+      {isLoading ? "Is loading ..." : data}
     </>
   );
 };
@@ -66,38 +88,13 @@ useFetch give us a resource, we need to pass that to useResource for get data
 ```js
 import { useCreateResource, useResource } from "react-concurrent";
 
-const fetchApi = id => fetch(`http://example.com/${id}`);
+const fetchApi = (id) => fetch(`http://example.com/${id}`);
 
 const app = () => {
   const [id, setId] = useState(1); // fetch is calling again if this state changed
-  const { resource } = useCreateResource(fetchApi, id);
+  const { resource } = useCreateResource(() => fetchApi(id), [id]);
 
   return <OtherComponent {...{ resource }} />;
-};
-
-const OtherComponent = ({ resource }) => {
-  const { data, isLoading, error } = useResource(resource);
-};
-```
-
-### useFetchCallback
-
-useFetchCallback doesn't call fetch until call refetch
-
-```js
-import { useFetchCallback, useResource } from "react-concurrent";
-
-const app = () => {
-  const { resource, refetch } = useFetchCallback(() =>
-    fetch("http://example.com/"),
-  );
-
-  return (
-    <>
-      <Button onPress={() => refetch} title="start fetch" />
-      <OtherComponent {...{ resource }} />;
-    </>
-  );
 };
 
 const OtherComponent = ({ resource }) => {
@@ -143,4 +140,5 @@ const OtherComponent = () => {
 ```
 
 ### Stories
+
 [How to fetch data with React-Concurrent](https://hosseinm-developer.medium.com/how-to-fetch-data-with-react-concurrent-54e1bac3797c?source=friends_link&sk=cb835f9c764e0d43acfdf57eed952b62)
