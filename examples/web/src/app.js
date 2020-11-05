@@ -1,19 +1,14 @@
 import React, { memo } from "react";
 import {
   useFetching,
-  useFetch,
+  useCreateResource,
   useResource,
   useFetchCallback,
   useFetchingCallback,
 } from "../../../lib";
 
 export default () => {
-  const {
-    data,
-    isLoading,
-    error: { message: errorMessage = "" },
-    refetch,
-  } = useFetching(() =>
+  const { data, isLoading, error, refetch } = useFetching(() =>
     fetch("https://gorest.co.in/public-api/users", {
       method: "GET",
     }).then((r) => r.json()),
@@ -26,8 +21,8 @@ export default () => {
           ? "is loading ... "
           : (JSON.stringify(data) || "").slice(0, 100)}
       </div>
-      <p>{errorMessage}</p>
-      {errorMessage && <button onClick={() => refetch()}>Try again</button>}
+      <p>{error?.message}</p>
+      {error?.message && <button onClick={() => refetch()}>Try again</button>}
 
       <TestFetch />
       <TestFetchCallback />
@@ -37,7 +32,7 @@ export default () => {
 };
 
 function TestFetch() {
-  const { resource } = useFetch(() =>
+  const { resource } = useCreateResource(() =>
     fetch("https://gorest.co.in/public-api/users", {
       method: "GET",
     }).then((r) => r.json()),
