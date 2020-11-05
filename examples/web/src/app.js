@@ -1,9 +1,8 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import {
   useFetching,
   useCreateResource,
   useResource,
-  useFetchCallback,
   useFetchingCallback,
 } from "../../../lib";
 
@@ -16,6 +15,8 @@ export default () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+      <h3>useFetching</h3>
+
       <div>
         {isLoading
           ? "is loading ... "
@@ -32,15 +33,29 @@ export default () => {
 };
 
 function TestFetch() {
-  const { resource } = useCreateResource(() =>
-    fetch("https://gorest.co.in/public-api/users", {
-      method: "GET",
-    }).then((r) => r.json()),
+  const [fakeDep, setFakeDep] = useState({});
+  const { resource } = useCreateResource(
+    () =>
+      fetch("https://gorest.co.in/public-api/users", {
+        method: "GET",
+      }).then((r) => r.json()),
+    [fakeDep],
+    { startFetchAtFirstRender: false },
   );
 
   const { data, isLoading, error } = useResource(resource);
   return (
     <>
+      <h3>
+        (useCreateResource with startFetchAtFirstRender=false) and useResource
+      </h3>
+      <button
+        onClick={() => setFakeDep({})}
+        style={{ width: 100, height: 40 }}
+        title="start fetch"
+      >
+        Fetch
+      </button>
       <div style={{ height: 100, overflow: "hidden" }}>
         {isLoading
           ? "is loading ... "
@@ -52,23 +67,23 @@ function TestFetch() {
 }
 
 const TestFetchCallback = memo(() => {
-  const { resource, refetch } = useFetchCallback(async () => {
+  const { data, isLoading, error, refetch } = useFetching(async () => {
     const r = await fetch("https://gorest.co.in/public-api/users", {
       method: "GET",
     });
     return await r.json();
   });
 
-  const { data, isLoading, error } = useResource(resource);
-
   return (
     <>
+      <h3>useFetching and refetch again</h3>
+
       <button
         onClick={() => refetch()}
         style={{ width: 100, height: 40 }}
         title="start fetch"
       >
-        start fetch
+        Refetch
       </button>
       <div style={{ height: 100 }}>
         {isLoading
@@ -89,12 +104,13 @@ function TestFetchingCallback() {
 
   return (
     <>
+      <h3>useFetchingCallback</h3>
       <button
         onClick={() => refetch()}
         style={{ width: 100, height: 40 }}
         title="start fetch"
       >
-        start fetch
+        Fetch
       </button>
       <div style={{ height: 100 }}>
         {isLoading

@@ -1,11 +1,16 @@
-import { UseResourceResponse } from "./resource";
+import {
+  UseCreateResource,
+  UseResourceResponse,
+  UseCreateResourceResponse,
+} from "./resource";
 import { AsyncReturnType } from "./utils";
 
-type UseFetchingResponse<DATA> = UseResourceResponse<DATA> & {
-  refetch: () => void;
+type UseFetchingResponse<T extends (...args: any) => any> = UseResourceResponse<
+  AsyncReturnType<T>
+> & {
+  refetch: UseCreateResourceResponse<T>["refetch"];
 };
 
 export type UseFetching = <T extends (...args: any) => any>(
-  fetchFunc: T,
-  ...args: Parameters<T>
-) => UseFetchingResponse<AsyncReturnType<T>>;
+  ...args: Parameters<UseCreateResource>
+) => UseFetchingResponse<T>;

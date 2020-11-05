@@ -1,9 +1,9 @@
+import { areHookInputsEqual } from "../utilities/areHookInputsEqual";
 import { AsyncReturnType } from "./utils";
 
 export const RESOURCE_PENDING = 0;
 export const RESOURCE_RESOLVED = 1;
 export const RESOURCE_REJECTED = 2;
-
 type ResourceStatus =
   | typeof RESOURCE_PENDING
   | typeof RESOURCE_RESOLVED
@@ -22,3 +22,20 @@ export interface UseResourceResponse<T> {
   isLoading: boolean;
   error: Error | undefined;
 }
+
+type Options = {
+  isEqual?: typeof areHookInputsEqual;
+  isPreloadAfterCallRefetch?: boolean;
+  startFetchAtFirstRender?: boolean;
+};
+
+export interface UseCreateResourceResponse<T extends (...args: any) => any> {
+  resource: Resource<T>;
+  refetch: (...args: Parameters<T>) => void;
+}
+
+export type UseCreateResource = <T extends (...args: any) => any>(
+  fetchFunc: T,
+  deps?: any[],
+  options?: Options,
+) => UseCreateResourceResponse<T>;

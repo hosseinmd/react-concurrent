@@ -5,16 +5,11 @@ import {
   RESOURCE_RESOLVED,
   RESOURCE_REJECTED,
   RESOURCE_PENDING,
+  UseCreateResource,
 } from "../types";
 import { AsyncReturnType } from "../types/utils";
-import { isEqual } from "lodash-es";
 import { createResource } from "../resource";
-
-interface ResourcesResponse<T> {
-  data: T[];
-  isLoading: boolean;
-  error: Error;
-}
+import { areHookInputsEqual } from "../utilities/areHookInputsEqual";
 
 /**
  * This function allow to use resource without React.Suspense.
@@ -41,48 +36,6 @@ function useResource<V extends (...args: any) => any>(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resource]);
-
-  return { data, isLoading, error };
-}
-
-/**
- * This function allow to use resources list without React.Suspense.
- *
- * @example
- *   const { data = [], isLoading, error } = useResource(resource, onError);
- *
- * @todo Is experimental
- */
-function useResources<V extends (...args: any) => any>(
-  resources: Resource<V>[],
-): ResourcesResponse<AsyncReturnType<V>> {
-  const [, forceUpdate] = useState({});
-  const resolved = resources.map(_destructorResource);
-
-  useLayoutEffect(() => {
-    let destructed = false;
-
-    const update = () => !destructed && forceUpdate({});
-
-    resources.forEach((source, index) =>
-      _listenerToResource(source, resolved[index], update),
-    );
-
-    return () => {
-      destructed = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resources]);
-
-  const data = resolved.reduce((prev: any[], { data: _data }) => {
-    if (!_data) {
-      return prev;
-    }
-
-    return [...prev, ..._data];
-  }, []);
-  const error = resolved[resolved.length - 1].error;
-  const isLoading = resolved[resolved.length - 1].isLoading;
 
   return { data, isLoading, error };
 }
@@ -125,10 +78,7 @@ function _listenerToResource(
   }
 }
 
-export interface UseCreateResourceResponse<T extends (...args: any) => any> {
-  resource: Resource<T>;
-  refetch: () => void;
-}
+const emptyResource = createResource(() => undefined);
 
 /**
  * A hook for creating resource without preloading
@@ -141,35 +91,48 @@ export interface UseCreateResourceResponse<T extends (...args: any) => any> {
  * @param arg This is fetchFunc arguments, if arguments changed function give
  *     another resource
  */
-function useCreateResource<T extends (...args: any) => any>(
-  fetchFunc: T,
-  ...arg: Parameters<T>
-): UseCreateResourceResponse<T> {
+const useCreateResource: UseCreateResource = (
+  fetchFunc,
+  deps = [],
+  {
+    isEqual = areHookInputsEqual,
+    isPreloadAfterCallRefetch = true,
+    startFetchAtFirstRender = true,
+  } = {},
+) => {
   const [, forceUpdate] = useState({});
 
-  const argRef = useRef<any[]>([]);
-  const funcRef = useRef<T>(fetchFunc);
-  const resourceRef = useRef<Resource<any> | null>(null);
-  const isArgChanged = isEqual(argRef.current, arg);
+  const preDepsRef = useRef<any[]>(deps);
+  const funcRef = useRef(fetchFunc);
+  const resourceRef = useRef<Resource<any>>(emptyResource);
 
   if (funcRef.current !== fetchFunc) {
     funcRef.current = fetchFunc;
   }
 
-  if (!isArgChanged || resourceRef.current === null) {
-    argRef.current = arg;
-    resourceRef.current = createResource(() => fetchFunc(...(arg as any)));
+  const isArgChanged = isEqual(deps, preDepsRef.current);
+
+  if (!isArgChanged) {
+    preDepsRef.current = deps;
   }
 
-  const refetch = useCallback((preload: boolean = true) => {
-    resourceRef.current = createResource(() =>
-      funcRef.current(...(argRef.current as any)),
-    );
-    preload && resourceRef.current.preload();
-    forceUpdate({});
-  }, []);
+  if (
+    !isArgChanged ||
+    (resourceRef.current === emptyResource && startFetchAtFirstRender)
+  ) {
+    resourceRef.current = createResource(() => fetchFunc());
+  }
+
+  const refetch = useCallback(
+    (...args: any) => {
+      resourceRef.current = createResource(() => funcRef.current(...args));
+      isPreloadAfterCallRefetch && resourceRef.current.preload();
+      forceUpdate({});
+    },
+    [isPreloadAfterCallRefetch],
+  );
 
   return { resource: resourceRef.current, refetch };
-}
+};
 
-export { useResource, useResources, useCreateResource };
+export { useResource, useCreateResource };
