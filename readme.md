@@ -8,8 +8,6 @@ A collection of hooks for fetching data easily.
 
 A collection of hooks for fetching data easily.
 
-This is tested on huge project. Everything is stable. but we are improving that. if you have an idea you are so welcome.
-
 ## TOC
 
 - [install](#install)
