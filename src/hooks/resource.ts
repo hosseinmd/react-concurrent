@@ -15,7 +15,7 @@ import { areHookInputsEqual } from "../utilities/areHookInputsEqual";
  * This function allow to use resource without React.Suspense.
  *
  * @example
- *   const { data = [], isLoading, error } = useResource(resource, onError);
+ *   const { data = [], isLoading, error } = useResource(resource);
  */
 function useResource<V extends (...args: any) => any>(
   resource: Resource<V>,

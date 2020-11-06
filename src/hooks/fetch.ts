@@ -1,6 +1,25 @@
 import { useCreateResource, useResource } from "./resource";
-import { UseFetchingCallback, UseFetching } from "../types";
+import {
+  UseCreateResource,
+  UseResourceResponse,
+  AsyncReturnType,
+  UseCreateResourceResponse,
+} from "../types";
 
+export type UseFetchingCallback = <T extends (...args: any) => any>(
+  fetchFunc: T,
+) => UseResourceResponse<AsyncReturnType<T>> & {
+  refetch: UseCreateResourceResponse<T>["refetch"];
+};
+
+/**
+ * For fetching data after invoke refetch
+ *
+ * @example
+ *   const { data, refetch } = useFetching(() => fetchApi());
+ *
+ *   return <Button onClick={refetch} />;
+ */
 const useFetchingCallback: UseFetchingCallback = (fetchFunc) => {
   const { resource, refetch } = useCreateResource(fetchFunc, [], {
     startFetchAtFirstRender: false,
@@ -10,6 +29,19 @@ const useFetchingCallback: UseFetchingCallback = (fetchFunc) => {
   return { data, error, isLoading, refetch };
 };
 
+export type UseFetching = <T extends (...args: any) => any>(
+  ...args: Parameters<UseCreateResource>
+) => UseResourceResponse<AsyncReturnType<T>> & {
+  refetch: UseCreateResourceResponse<T>["refetch"];
+};
+
+/**
+ * For fetching data based on state change
+ *
+ * @example
+ *   const [amount] = useState(100);
+ *   const { data, isLoading } = useFetching(() => fetchApi(amount), [amount]);
+ */
 const useFetching: UseFetching = (fetchFunc, deps, options) => {
   const { resource, refetch } = useCreateResource(fetchFunc, deps, options);
   const { data, error, isLoading } = useResource<any>(resource);

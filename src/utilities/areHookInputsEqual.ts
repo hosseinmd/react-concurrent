@@ -5,19 +5,23 @@ const __DEV__ = process.env.NODE_ENV !== "production";
 
 function areHookInputsEqual(nextDeps: any[], prevDeps: any[] | null) {
   if (!Array.isArray(prevDeps)) {
-    console.error(
-      "React-Concurrent: Dependencies of hooks should be an array but received " +
-        typeof prevDeps,
-    );
+    if (__DEV__) {
+      throw new Error(
+        "React-Concurrent: Dependencies of hooks should be an array but received " +
+          typeof prevDeps,
+      );
+    }
     //Backward compatible
     return isEqual(prevDeps, nextDeps);
   }
 
   if (!Array.isArray(nextDeps)) {
-    console.error(
-      "React-Concurrent: Dependencies of hooks should be an array but received " +
-        typeof nextDeps,
-    );
+    if (__DEV__) {
+      throw new Error(
+        "React-Concurrent: Dependencies of hooks should be an array but received " +
+          typeof nextDeps,
+      );
+    }
 
     //Backward compatible
     return isEqual(prevDeps, nextDeps);
