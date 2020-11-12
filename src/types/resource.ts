@@ -23,7 +23,7 @@ export interface UseResourceResponse<T> {
   error: Error | undefined;
 }
 
-type Options = {
+export type Options = {
   isEqual?: typeof areHookInputsEqual;
   isPreloadAfterCallRefetch?: boolean;
   startFetchAtFirstRender?: boolean;

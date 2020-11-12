@@ -1,9 +1,9 @@
 import { useCreateResource, useResource } from "./resource";
 import {
-  UseCreateResource,
   UseResourceResponse,
   AsyncReturnType,
   UseCreateResourceResponse,
+  Options,
 } from "../types";
 
 export type UseFetchingCallback = <T extends (...args: any) => any>(
@@ -30,7 +30,9 @@ const useFetchingCallback: UseFetchingCallback = (fetchFunc) => {
 };
 
 export type UseFetching = <T extends (...args: any) => any>(
-  ...args: Parameters<UseCreateResource>
+  fetchFunc: T,
+  deps?: any[],
+  options?: Options,
 ) => UseResourceResponse<AsyncReturnType<T>> & {
   refetch: UseCreateResourceResponse<T>["refetch"];
 };
