@@ -1,5 +1,5 @@
 import { areHookInputsEqual } from "../utilities/areHookInputsEqual";
-import { AsyncReturnType } from "./utils";
+import type { AsyncReturnType } from "./utils";
 
 export const RESOURCE_PENDING = 0;
 export const RESOURCE_RESOLVED = 1;
