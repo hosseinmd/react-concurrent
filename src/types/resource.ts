@@ -14,6 +14,7 @@ export type Resource<T extends (...args: any) => any> = {
   read(): AsyncReturnType<T> | undefined;
   preload(): void;
   status: ResourceStatus;
+  isLoading: boolean;
   value: AsyncReturnType<T> | T | undefined;
 };
 

@@ -56,6 +56,7 @@ function getResult(resource: Resource<any>, fetch: () => any) {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_REJECTED;
         resource.value = error;
+        resource.isLoading = false;
       }
     });
 
@@ -63,11 +64,13 @@ function getResult(resource: Resource<any>, fetch: () => any) {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_RESOLVED;
         resource.value = value;
+        resource.isLoading = false;
       }
     });
 
     resource.status = RESOURCE_PENDING;
     resource.value = thenable;
+    resource.isLoading = true;
 
     return resource;
   }
@@ -96,6 +99,7 @@ function createResource<T extends (...args: any) => any>(
   const resource: Resource<T> = {
     status: undefined,
     value: undefined,
+    isLoading: false,
     read() {
       // react-cache currently doesn't rely on context, but it may in the
       // future, so we read anyway to prevent access outside of render.

@@ -45,15 +45,11 @@ function _destructorResource(source: Resource<any>) {
 
   let data;
   let error;
-  let isLoading;
+  const isLoading = source.isLoading;
   if (source.status === RESOURCE_RESOLVED) {
     data = source.value;
-    isLoading = false;
   } else if (source.status === RESOURCE_REJECTED) {
-    isLoading = false;
     error = source.value;
-  } else {
-    isLoading = true;
   }
 
   return {
