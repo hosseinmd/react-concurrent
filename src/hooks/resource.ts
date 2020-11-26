@@ -1,4 +1,10 @@
-import { useState, useLayoutEffect, useCallback, useRef } from "react";
+import {
+  useState,
+  useLayoutEffect,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import {
   UseResourceResponse,
   Resource,
@@ -11,6 +17,9 @@ import { AsyncReturnType } from "../types/utils";
 import { createResource } from "../resource";
 import { areHookInputsEqual } from "../utilities/areHookInputsEqual";
 
+export type UseResourceOptions = {
+  loadingStartdelay?: number;
+};
 /**
  * This function allow to use resource without React.Suspense.
  *
@@ -19,17 +28,18 @@ import { areHookInputsEqual } from "../utilities/areHookInputsEqual";
  */
 function useResource<V extends (...args: any) => any>(
   resource: Resource<V>,
+  { loadingStartdelay }: UseResourceOptions = {},
 ): UseResourceResponse<AsyncReturnType<V>> {
   const [, forceUpdate] = useState({});
 
-  const { data, error, isLoading } = _destructorResource(resource);
+  const { data, error } = _destructorResource(resource);
 
   useLayoutEffect(() => {
     let destructed = false;
 
     const update = () => !destructed && forceUpdate({});
 
-    _listenerToResource(resource, { data, error, isLoading }, update);
+    _listenerToResource(resource, { data, error }, update);
 
     return () => {
       destructed = true;
@@ -37,7 +47,37 @@ function useResource<V extends (...args: any) => any>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resource]);
 
-  return { data, isLoading, error };
+  const isLoadingRef = useRef(false);
+
+  useEffect(() => {
+    if (!resource.isLoading || !loadingStartdelay) {
+      return;
+    }
+
+    let timeout: null | NodeJS.Timeout = setTimeout(() => {
+      isLoadingRef.current = true;
+      forceUpdate({});
+      timeout = null;
+    }, loadingStartdelay);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      } else {
+        isLoadingRef.current = false;
+      }
+    };
+  }, [resource.isLoading, loadingStartdelay]);
+
+  return {
+    data,
+    isLoading:
+      loadingStartdelay && resource.isLoading
+        ? isLoadingRef.current
+        : resource.isLoading,
+    error,
+  };
 }
 
 function _destructorResource(source: Resource<any>) {
@@ -45,7 +85,6 @@ function _destructorResource(source: Resource<any>) {
 
   let data;
   let error;
-  const isLoading = source.isLoading;
   if (source.status === RESOURCE_RESOLVED) {
     data = source.value;
   } else if (source.status === RESOURCE_REJECTED) {
@@ -55,13 +94,12 @@ function _destructorResource(source: Resource<any>) {
   return {
     data,
     error,
-    isLoading,
   };
 }
 
 function _listenerToResource(
   resource: Resource<any>,
-  resolved: UseResourceResponse<any>,
+  resolved: { data: any; error: any },
   callback: () => void,
 ) {
   if (

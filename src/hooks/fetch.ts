@@ -1,4 +1,4 @@
-import { useCreateResource, useResource } from "./resource";
+import { useCreateResource, useResource, UseResourceOptions } from "./resource";
 import {
   UseResourceResponse,
   AsyncReturnType,
@@ -8,6 +8,7 @@ import {
 
 export type UseFetchingCallback = <T extends (...args: any) => any>(
   fetchFunc: T,
+  options?: UseResourceOptions,
 ) => UseResourceResponse<AsyncReturnType<T>> & {
   refetch: UseCreateResourceResponse<T>["refetch"];
 };
@@ -20,11 +21,11 @@ export type UseFetchingCallback = <T extends (...args: any) => any>(
  *
  *   return <Button onClick={refetch} />;
  */
-const useFetchingCallback: UseFetchingCallback = (fetchFunc) => {
+const useFetchingCallback: UseFetchingCallback = (fetchFunc, options) => {
   const { resource, refetch } = useCreateResource(fetchFunc, [], {
     startFetchAtFirstRender: false,
   });
-  const { data, error, isLoading } = useResource(resource);
+  const { data, error, isLoading } = useResource(resource, options);
 
   return { data, error, isLoading, refetch };
 };
@@ -32,7 +33,7 @@ const useFetchingCallback: UseFetchingCallback = (fetchFunc) => {
 export type UseFetching = <T extends (...args: any) => any>(
   fetchFunc: T,
   deps?: any[],
-  options?: Options,
+  options?: Options & UseResourceOptions,
 ) => UseResourceResponse<AsyncReturnType<T>> & {
   refetch: UseCreateResourceResponse<T>["refetch"];
 };
@@ -46,7 +47,9 @@ export type UseFetching = <T extends (...args: any) => any>(
  */
 const useFetching: UseFetching = (fetchFunc, deps, options) => {
   const { resource, refetch } = useCreateResource(fetchFunc, deps, options);
-  const { data, error, isLoading } = useResource<any>(resource);
+  const { data, error, isLoading } = useResource<any>(resource, {
+    loadingStartdelay: options?.loadingStartdelay,
+  });
 
   return { data, error, isLoading, refetch };
 };

@@ -28,27 +28,6 @@ function readContext(Context: React.Context<any>) {
 const CacheContext = React.createContext(null);
 
 function getResult(resource: Resource<any>, fetch: () => any) {
-  // if (isAsyncFunction(fetch)) {
-  //   const thenable = fetch().catch((error: any) => {
-  //     if (resource.status === RESOURCE_PENDING) {
-  //       resource.status = RESOURCE_REJECTED;
-  //       resource.value = error;
-  //     }
-  //   });
-
-  //   thenable.then((value: any) => {
-  //     if (resource.status === RESOURCE_PENDING) {
-  //       resource.status = RESOURCE_RESOLVED;
-  //       resource.value = value;
-  //     }
-  //   });
-
-  //   resource.status = RESOURCE_PENDING;
-  //   resource.value = thenable;
-
-  //   return resource;
-  // }
-
   const result = fetch();
 
   if (isPromise(result)) {
