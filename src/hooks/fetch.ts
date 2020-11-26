@@ -32,6 +32,7 @@ const useFetchingCallback = <T extends (...args: any) => any>(
  */
 const useFetching = <T extends (...args: any) => any>(
   fetchFunc: T,
+  /** Default is [] */
   deps?: any[],
   options?: UseFetchingOptions,
 ) => {

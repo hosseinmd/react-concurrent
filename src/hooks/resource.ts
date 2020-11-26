@@ -11,13 +11,19 @@ import {
   RESOURCE_RESOLVED,
   RESOURCE_REJECTED,
   RESOURCE_PENDING,
-  UseCreateResource,
+  Options,
+  UseCreateResourceResponse,
 } from "../types";
 import { AsyncReturnType } from "../types/utils";
 import { createResource } from "../resource";
 import { areHookInputsEqual } from "../utilities/areHookInputsEqual";
 
 export type UseResourceOptions = {
+  /**
+   * Adds a delay to loading so that loading is not shown if the api is fetched sooner
+   *
+   * If you set it 1000 ms, loading not showing until 1000 ms
+   */
   loadingStartdelay?: number;
 };
 /**
@@ -125,14 +131,15 @@ const emptyResource = createResource(() => undefined);
  * @param arg This is fetchFunc arguments, if arguments changed function give
  *     another resource
  */
-const useCreateResource: UseCreateResource = (
-  fetchFunc,
-  deps = [],
+const useCreateResource = <T extends (...args: any) => any>(
+  fetchFunc: T,
+  /** Default is [] */
+  deps: any[] = [],
   {
     isPreloadAfterCallRefetch = true,
     startFetchAtFirstRender = true,
-  } = {},
-) => {
+  }: Options = {},
+): UseCreateResourceResponse<T> => {
   const [, forceUpdate] = useState({});
 
   const preDepsRef = useRef<any[]>(deps);

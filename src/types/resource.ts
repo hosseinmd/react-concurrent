@@ -26,6 +26,12 @@ export interface UseResourceResponse<T> {
 
 export interface Options {
   isPreloadAfterCallRefetch?: boolean;
+  /**
+   * Set false to prevents fetching in the first step, just fetch after deps be
+   * changed, or refetch called.
+   *
+   * Default is true.
+   */
   startFetchAtFirstRender?: boolean;
 }
 
@@ -33,9 +39,3 @@ export interface UseCreateResourceResponse<T extends (...args: any) => any> {
   resource: Resource<T>;
   refetch: (...args: Parameters<T>) => void;
 }
-
-export type UseCreateResource = <T extends (...args: any) => any>(
-  fetchFunc: T,
-  deps?: any[],
-  options?: Options,
-) => UseCreateResourceResponse<T>;

@@ -42,21 +42,7 @@ const { data, isLoading, error, refetch } = useFetching(async () => {
 });
 ```
 
-Fetching based on a state change.
-In this example every time query change, api will be call again.
-
-```js
-import { useFetching } from "react-concurrent";
-
-const app = () => {
-  const [query, setQuery] = useState("a query");
-
-  const { data, isLoading, error } = useFetching(
-    () => fetch("http://example.com/search?query=" + query),
-    [query],
-  );
-};
-```
+[useFetching.md](useFetching.md).
 
 ### useFetchingCallback
 
