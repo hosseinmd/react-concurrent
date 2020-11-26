@@ -1,17 +1,7 @@
 import { useCreateResource, useResource, UseResourceOptions } from "./resource";
-import {
-  UseResourceResponse,
-  AsyncReturnType,
-  UseCreateResourceResponse,
-  Options,
-} from "../types";
+import { Options } from "../types";
 
-export type UseFetchingCallback = <T extends (...args: any) => any>(
-  fetchFunc: T,
-  options?: UseResourceOptions,
-) => UseResourceResponse<AsyncReturnType<T>> & {
-  refetch: UseCreateResourceResponse<T>["refetch"];
-};
+export interface UseFetchingOptions extends Options, UseResourceOptions {}
 
 /**
  * For fetching data after invoke refetch
@@ -21,21 +11,16 @@ export type UseFetchingCallback = <T extends (...args: any) => any>(
  *
  *   return <Button onClick={refetch} />;
  */
-const useFetchingCallback: UseFetchingCallback = (fetchFunc, options) => {
-  const { resource, refetch } = useCreateResource(fetchFunc, [], {
+const useFetchingCallback = <T extends (...args: any) => any>(
+  fetchFunc: T,
+  options?: UseResourceOptions,
+) => {
+  const { resource, refetch } = useCreateResource<T>(fetchFunc, [], {
     startFetchAtFirstRender: false,
   });
-  const { data, error, isLoading } = useResource(resource, options);
+  const { data, error, isLoading } = useResource<T>(resource, options);
 
   return { data, error, isLoading, refetch };
-};
-
-export type UseFetching = <T extends (...args: any) => any>(
-  fetchFunc: T,
-  deps?: any[],
-  options?: Options & UseResourceOptions,
-) => UseResourceResponse<AsyncReturnType<T>> & {
-  refetch: UseCreateResourceResponse<T>["refetch"];
 };
 
 /**
@@ -45,9 +30,13 @@ export type UseFetching = <T extends (...args: any) => any>(
  *   const [amount] = useState(100);
  *   const { data, isLoading } = useFetching(() => fetchApi(amount), [amount]);
  */
-const useFetching: UseFetching = (fetchFunc, deps, options) => {
-  const { resource, refetch } = useCreateResource(fetchFunc, deps, options);
-  const { data, error, isLoading } = useResource<any>(resource, {
+const useFetching = <T extends (...args: any) => any>(
+  fetchFunc: T,
+  deps?: any[],
+  options?: UseFetchingOptions,
+) => {
+  const { resource, refetch } = useCreateResource<T>(fetchFunc, deps, options);
+  const { data, error, isLoading } = useResource<T>(resource, {
     loadingStartdelay: options?.loadingStartdelay,
   });
 

@@ -24,11 +24,12 @@ export interface UseResourceResponse<T> {
   error: Error | undefined;
 }
 
-export type Options = {
+export interface Options {
+  // @todo should be rename
   isEqual?: typeof areHookInputsEqual;
   isPreloadAfterCallRefetch?: boolean;
   startFetchAtFirstRender?: boolean;
-};
+}
 
 export interface UseCreateResourceResponse<T extends (...args: any) => any> {
   resource: Resource<T>;
