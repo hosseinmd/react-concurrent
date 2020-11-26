@@ -129,7 +129,6 @@ const useCreateResource: UseCreateResource = (
   fetchFunc,
   deps = [],
   {
-    isEqual = areHookInputsEqual,
     isPreloadAfterCallRefetch = true,
     startFetchAtFirstRender = true,
   } = {},
@@ -144,7 +143,7 @@ const useCreateResource: UseCreateResource = (
     funcRef.current = fetchFunc;
   }
 
-  const isArgChanged = isEqual(deps, preDepsRef.current);
+  const isArgChanged = areHookInputsEqual(deps, preDepsRef.current);
 
   if (!isArgChanged) {
     preDepsRef.current = deps;
