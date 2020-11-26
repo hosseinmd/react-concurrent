@@ -1,5 +1,3 @@
-import { isEqual } from "lodash-es";
-
 // copied from React-Reconciler
 const __DEV__ = process.env.NODE_ENV !== "production";
 
@@ -12,7 +10,7 @@ function areHookInputsEqual(nextDeps: any[], prevDeps: any[] | null) {
       );
     }
     //Backward compatible
-    return isEqual(prevDeps, nextDeps);
+    return prevDeps === nextDeps;
   }
 
   if (!Array.isArray(nextDeps)) {
@@ -24,7 +22,7 @@ function areHookInputsEqual(nextDeps: any[], prevDeps: any[] | null) {
     }
 
     //Backward compatible
-    return isEqual(prevDeps, nextDeps);
+    return prevDeps === nextDeps;
   }
 
   if (__DEV__) {
