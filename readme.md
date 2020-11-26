@@ -1,10 +1,10 @@
-A collection of hooks for fetching data easily.
+# React-Concurrent A collection of hooks for fetching data easily.
 
 [![NPM](https://nodei.co/npm/react-concurrent.png)](https://nodei.co/npm/react-concurrent/)
 
 [![install size](https://packagephobia.now.sh/badge?p=react-concurrent)](https://packagephobia.now.sh/result?p=react-concurrent) [![dependencies](https://david-dm.org/poolkhord/react-concurrent.svg)](https://david-dm.org/poolkhord/react-concurrent.svg)
 
-# react-concurrent
+## react-concurrent
 
 A collection of hooks for fetching data easily.
 
