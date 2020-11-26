@@ -14,7 +14,7 @@ export default () => {
       }).then((r) => r.json()),
     [],
     {
-      loadingStartdelay: 1000,
+      loadingStartDelay: 1000,
     },
   );
 
@@ -62,7 +62,7 @@ function TestFetch() {
   );
 
   const { data, isLoading, error } = useResource(resource, {
-    loadingStartdelay: 2000,
+    loadingStartDelay: 2000,
   });
   return (
     <>

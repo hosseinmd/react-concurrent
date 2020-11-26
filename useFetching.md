@@ -54,7 +54,7 @@ const app = () => {
       startFetchAtFirstRender: false,
       // Adds a delay to loading so that loading is not shown if the api is fetched sooner
       // if you set it 1000 ms, loading not showing until 1000 ms
-      loadingStartdelay: 1000,
+      loadingStartDelay: 1000,
     },
   );
 };

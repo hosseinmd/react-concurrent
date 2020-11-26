@@ -24,7 +24,7 @@ export type UseResourceOptions = {
    *
    * If you set it 1000 ms, loading not showing until 1000 ms
    */
-  loadingStartdelay?: number;
+  loadingStartDelay?: number;
 };
 /**
  * This function allow to use resource without React.Suspense.
@@ -34,7 +34,7 @@ export type UseResourceOptions = {
  */
 function useResource<V extends (...args: any) => any>(
   resource: Resource<V>,
-  { loadingStartdelay }: UseResourceOptions = {},
+  { loadingStartDelay }: UseResourceOptions = {},
 ): UseResourceResponse<AsyncReturnType<V>> {
   const [, forceUpdate] = useState({});
 
@@ -56,7 +56,7 @@ function useResource<V extends (...args: any) => any>(
   const isLoadingRef = useRef(false);
 
   useEffect(() => {
-    if (!resource.isLoading || !loadingStartdelay) {
+    if (!resource.isLoading || !loadingStartDelay) {
       return;
     }
 
@@ -64,7 +64,7 @@ function useResource<V extends (...args: any) => any>(
       isLoadingRef.current = true;
       forceUpdate({});
       timeout = null;
-    }, loadingStartdelay);
+    }, loadingStartDelay);
 
     return () => {
       if (timeout) {
@@ -74,12 +74,12 @@ function useResource<V extends (...args: any) => any>(
         isLoadingRef.current = false;
       }
     };
-  }, [resource.isLoading, loadingStartdelay]);
+  }, [resource.isLoading, loadingStartDelay]);
 
   return {
     data,
     isLoading:
-      loadingStartdelay && resource.isLoading
+      loadingStartDelay && resource.isLoading
         ? isLoadingRef.current
         : resource.isLoading,
     error,

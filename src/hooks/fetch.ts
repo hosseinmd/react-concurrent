@@ -38,7 +38,7 @@ const useFetching = <T extends (...args: any) => any>(
 ) => {
   const { resource, refetch } = useCreateResource<T>(fetchFunc, deps, options);
   const { data, error, isLoading } = useResource<T>(resource, {
-    loadingStartdelay: options?.loadingStartdelay,
+    loadingStartDelay: options?.loadingStartDelay,
   });
 
   return { data, error, isLoading, refetch };
