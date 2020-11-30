@@ -27,14 +27,24 @@ function readContext(Context: React.Context<any>) {
 
 const CacheContext = React.createContext(null);
 
-function getResult(resource: Resource<any>, fetch: () => any) {
-  const result = fetch();
+function getResult<T extends (...args: any) => any>(
+  resource: Resource<T>,
+  fetch: () => any,
+) {
+  let error;
+  let result;
+
+  try {
+    result = fetch();
+  } catch (e) {
+    error = e;
+  }
 
   if (isPromise(result)) {
-    const thenable = result.catch((error: any) => {
+    const thenable = result.catch((error: Error) => {
       if (resource.status === RESOURCE_PENDING) {
         resource.status = RESOURCE_REJECTED;
-        resource.value = error;
+        resource.error = error;
         resource.isLoading = false;
       }
     });
@@ -48,7 +58,7 @@ function getResult(resource: Resource<any>, fetch: () => any) {
     });
 
     resource.status = RESOURCE_PENDING;
-    resource.value = thenable;
+    resource.promise = thenable;
     resource.isLoading = true;
 
     return resource;
@@ -56,6 +66,7 @@ function getResult(resource: Resource<any>, fetch: () => any) {
 
   resource.status = RESOURCE_RESOLVED;
   resource.value = result;
+  resource.error = error;
 
   return resource;
 }
@@ -74,29 +85,29 @@ function accessResult<T extends (...args: any) => any>(
 
 function createResource<T extends (...args: any) => any>(
   fetch: T,
+  initialValue?: any,
 ): Resource<T> {
   const resource: Resource<T> = {
     status: undefined,
-    value: undefined,
+    value: initialValue,
+    error: undefined,
+    promise: undefined,
     isLoading: false,
     read() {
-      // react-cache currently doesn't rely on context, but it may in the
+      // react-concurrent doesn't rely on context, but it may in the
       // future, so we read anyway to prevent access outside of render.
       readContext(CacheContext);
       const result = accessResult(resource, fetch);
 
       switch (result.status) {
         case RESOURCE_PENDING: {
-          const suspender = result.value;
-          throw suspender;
+          throw result.promise;
         }
         case RESOURCE_RESOLVED: {
-          const value = result.value as AsyncReturnType<T>;
-          return value;
+          return result.value as AsyncReturnType<T>;
         }
         case RESOURCE_REJECTED: {
-          const error = result.value;
-          throw error;
+          throw result.error;
         }
         default:
           // Should be unreachable
