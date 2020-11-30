@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/hosseinmd/react-concurrent/compare/v2.1.1...v2.2.0) (2020-11-30)
+
+
+### Features
+
+* add initialvalue to createResource param ([1527b20](https://github.com/hosseinmd/react-concurrent/commit/1527b2028132bb5cf0645401ad4077f01a191194))
+* add keepDataAliveWhenFetching to fetching hooks options ([46ff0ad](https://github.com/hosseinmd/react-concurrent/commit/46ff0ad095f5c330bad38dff040a9749a8bc8037))
+
 ## [2.1.0](https://github.com/hosseinmd/react-concurrent/compare/v2.0.1...v2.1.0) (2020-11-26)
 
 
