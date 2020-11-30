@@ -24,25 +24,7 @@ export default () => {
     <div style={{ display: "flex", flexDirection: "column" }}>
       <h3>useFetching</h3>
       <span>1 second loading start delay</span>
-      <button
-        onClick={refetch}
-        style={{ width: 100, height: 40 }}
-        title="start fetch"
-      >
-        reFetch
-      </button>
-      <div
-        style={{
-          marginBottom: 30,
-          color: isLoading ? "blue" : data ? "green" : "red",
-        }}
-      >
-        {isLoading ? "is loading ... " : ""}
-        {data ? "Data is loaded" : "Data is not loaded"}
-      </div>
-      <p>{error?.message}</p>
-      {error?.message && <button onClick={() => refetch()}>Try again</button>}
-
+      <ShowResponse {...{ data, isLoading, refetch, error }} />
       <TestFetch />
       <TestFetchCallback />
       <TestFetchingCallback />
@@ -70,23 +52,10 @@ function TestFetch() {
         (useCreateResource with startFetchAtFirstRender=false) and useResource
       </h3>
       <span>2 second loading start delay</span>
-      <button
-        onClick={() => setFakeDep({})}
-        style={{ width: 100, height: 40 }}
-        title="start fetch"
-      >
-        Fetch
-      </button>
-      <div
-        style={{
-          marginBottom: 30,
-          color: isLoading ? "blue" : data ? "green" : "red",
-        }}
-      >
-        {isLoading ? "is loading ... " : ""}
-        {data ? "Data is loaded" : "Data is not loaded"}
-      </div>
-      <p>{error?.message ?? ""}</p>
+      <ShowResponse
+        refetch={() => setFakeDep({})}
+        {...{ data, isLoading, error }}
+      />
     </>
   );
 }
@@ -102,40 +71,35 @@ const TestFetchCallback = memo(() => {
   return (
     <>
       <h3>useFetching and refetch again</h3>
-
-      <button
-        onClick={() => refetch()}
-        style={{ width: 100, height: 40 }}
-        title="start fetch"
-      >
-        Refetch
-      </button>
-      <div
-        style={{
-          marginBottom: 30,
-          color: isLoading ? "blue" : data ? "green" : "red",
-        }}
-      >
-        {isLoading ? "is loading ... " : ""}
-        {data ? "Data is loaded" : "Data is not loaded"}
-      </div>
-      <p>{error?.message ?? ""}</p>
+      <ShowResponse {...{ data, isLoading, refetch, error }} />
     </>
   );
 });
 
 function TestFetchingCallback() {
-  const { data, isLoading, error, refetch } = useFetchingCallback(() =>
-    fetch("https://gorest.co.in/public-api/users", {
-      method: "GET",
-    }).then((r) => r.json()),
+  const { data, isLoading, error, refetch } = useFetchingCallback(
+    () =>
+      fetch("https://gorest.co.in/public-api/users", {
+        method: "GET",
+      }).then((r) => r.json()),
+    { keepDataAliveWhenFetching: true },
   );
 
   return (
     <>
       <h3>useFetchingCallback</h3>
+      <span>keepDataAliveWhenFetching is true</span>
+
+      <ShowResponse {...{ data, isLoading, refetch, error }} />
+    </>
+  );
+}
+
+function ShowResponse({ data, isLoading, refetch, error }) {
+  return (
+    <>
       <button
-        onClick={() => refetch()}
+        onClick={refetch}
         style={{ width: 100, height: 40 }}
         title="start fetch"
       >
@@ -143,11 +107,17 @@ function TestFetchingCallback() {
       </button>
       <div
         style={{
-          marginBottom: 30,
-          color: isLoading ? "blue" : data ? "green" : "red",
+          marginBottom: 20,
+          color: isLoading ? "blue" : "black",
         }}
       >
-        {isLoading ? "is loading ... " : ""}
+        {isLoading ? "is loading ... " : "loading is false"}
+      </div>
+      <div
+        style={{
+          color: data ? "green" : "red",
+        }}
+      >
         {data ? "Data is loaded" : "Data is not loaded"}
       </div>
       <p>{error?.message ?? ""}</p>
