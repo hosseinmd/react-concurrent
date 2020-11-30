@@ -9,7 +9,6 @@ import {
   UseResourceResponse,
   Resource,
   RESOURCE_RESOLVED,
-  RESOURCE_REJECTED,
   RESOURCE_PENDING,
   Options,
   UseCreateResourceResponse,
@@ -38,7 +37,10 @@ function useResource<V extends (...args: any) => any>(
 ): UseResourceResponse<AsyncReturnType<V>> {
   const [, forceUpdate] = useState({});
 
-  const { data, error } = _destructorResource(resource);
+  resource.preload();
+
+  const data = resource.value;
+  const error = resource.error;
 
   useLayoutEffect(() => {
     let destructed = false;
@@ -86,25 +88,8 @@ function useResource<V extends (...args: any) => any>(
   };
 }
 
-function _destructorResource(source: Resource<any>) {
-  source.preload();
-
-  let data;
-  let error;
-  if (source.status === RESOURCE_RESOLVED) {
-    data = source.value;
-  } else if (source.status === RESOURCE_REJECTED) {
-    error = source.value;
-  }
-
-  return {
-    data,
-    error,
-  };
-}
-
-function _listenerToResource(
-  resource: Resource<any>,
+function _listenerToResource<T extends Resource<() => any>>(
+  resource: T,
   resolved: { data: any; error: any },
   callback: () => void,
 ) {
@@ -114,7 +99,7 @@ function _listenerToResource(
   ) {
     callback();
   } else if (resource.status === RESOURCE_PENDING) {
-    resource.value.then(callback);
+    resource.promise?.then(callback);
   }
 }
 
@@ -138,13 +123,14 @@ const useCreateResource = <T extends (...args: any) => any>(
   {
     isPreloadAfterCallRefetch = true,
     startFetchAtFirstRender = true,
+    keepDataAliveWhenFetching = false,
   }: Options = {},
 ): UseCreateResourceResponse<T> => {
   const [, forceUpdate] = useState({});
 
   const preDepsRef = useRef<any[]>(deps);
   const funcRef = useRef(fetchFunc);
-  const resourceRef = useRef<Resource<any>>(emptyResource);
+  const resourceRef = useRef<Resource<T>>(emptyResource as Resource<T>);
 
   if (funcRef.current !== fetchFunc) {
     funcRef.current = fetchFunc;
@@ -160,16 +146,22 @@ const useCreateResource = <T extends (...args: any) => any>(
     !isArgChanged ||
     (resourceRef.current === emptyResource && startFetchAtFirstRender)
   ) {
-    resourceRef.current = createResource(() => fetchFunc());
+    resourceRef.current = createResource<T>(
+      fetchFunc,
+      keepDataAliveWhenFetching ? resourceRef.current.value : undefined,
+    );
   }
 
   const refetch = useCallback(
     (...args: any) => {
-      resourceRef.current = createResource(() => funcRef.current(...args));
+      resourceRef.current = createResource<T>(
+        (() => funcRef.current(...args)) as T,
+        keepDataAliveWhenFetching ? resourceRef.current.value : undefined,
+      );
       isPreloadAfterCallRefetch && resourceRef.current.preload();
       forceUpdate({});
     },
-    [isPreloadAfterCallRefetch],
+    [isPreloadAfterCallRefetch, keepDataAliveWhenFetching],
   );
 
   return { resource: resourceRef.current, refetch };

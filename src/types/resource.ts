@@ -10,12 +10,22 @@ type ResourceStatus =
   | typeof RESOURCE_REJECTED
   | undefined;
 
-export type Resource<T extends (...args: any) => any> = {
+export type Resource<
+  T extends (...args: any) => any = (...args: any) => any
+> = {
   read(): AsyncReturnType<T> | undefined;
   preload(): void;
   status: ResourceStatus;
   isLoading: boolean;
-  value: AsyncReturnType<T> | T | undefined;
+  value: AsyncReturnType<T> | undefined;
+  promise:
+    | (T extends Promise<any>
+        ? T
+        : T extends (...args: any) => Promise<infer U>
+        ? Promise<U>
+        : undefined)
+    | undefined;
+  error: Error | undefined;
 };
 
 export interface UseResourceResponse<T> {
@@ -33,6 +43,13 @@ export interface Options {
    * Default is true.
    */
   startFetchAtFirstRender?: boolean;
+  /**
+   * If it is true, during api reFetching, data will keep previous data until
+   * refetch ended and new data assign
+   *
+   * Default is false
+   */
+  keepDataAliveWhenFetching?: boolean;
 }
 
 export interface UseCreateResourceResponse<T extends (...args: any) => any> {

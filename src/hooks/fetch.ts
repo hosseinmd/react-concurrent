@@ -2,6 +2,9 @@ import { useCreateResource, useResource, UseResourceOptions } from "./resource";
 import { Options } from "../types";
 
 export interface UseFetchingOptions extends Options, UseResourceOptions {}
+export interface UseFetchingCallbackOptions
+  extends Omit<Options, "startFetchAtFirstRender">,
+    UseResourceOptions {}
 
 /**
  * For fetching data after invoke refetch
@@ -13,9 +16,10 @@ export interface UseFetchingOptions extends Options, UseResourceOptions {}
  */
 const useFetchingCallback = <T extends (...args: any) => any>(
   fetchFunc: T,
-  options?: UseResourceOptions,
+  options?: UseFetchingCallbackOptions,
 ) => {
   const { resource, refetch } = useCreateResource<T>(fetchFunc, [], {
+    ...options,
     startFetchAtFirstRender: false,
   });
   const { data, error, isLoading } = useResource<T>(resource, options);
