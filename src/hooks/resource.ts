@@ -32,7 +32,7 @@ export type UseResourceOptions = {
  *   const { data = [], isLoading, error } = useResource(resource);
  */
 function useResource<V extends (...args: any) => any>(
-  resource: Resource<V>,
+  resource: Resource<V, AsyncReturnType<V>>,
   { loadingStartDelay }: UseResourceOptions = {},
 ): UseResourceResponse<AsyncReturnType<V>> {
   const [, forceUpdate] = useState({});
@@ -88,7 +88,7 @@ function useResource<V extends (...args: any) => any>(
   };
 }
 
-function _listenerToResource<T extends Resource<() => any>>(
+function _listenerToResource<T extends Resource<() => any, any>>(
   resource: T,
   resolved: { data: any; error: any },
   callback: () => void,
@@ -130,7 +130,9 @@ const useCreateResource = <T extends (...args: any) => any>(
 
   const preDepsRef = useRef<any[]>(deps);
   const funcRef = useRef(fetchFunc);
-  const resourceRef = useRef<Resource<T>>(emptyResource as Resource<T>);
+  const resourceRef = useRef<Resource<T, AsyncReturnType<T>>>(
+    emptyResource as any,
+  );
 
   if (funcRef.current !== fetchFunc) {
     funcRef.current = fetchFunc;
@@ -146,7 +148,7 @@ const useCreateResource = <T extends (...args: any) => any>(
     !isArgChanged ||
     (resourceRef.current === emptyResource && startFetchAtFirstRender)
   ) {
-    resourceRef.current = createResource<T>(
+    resourceRef.current = createResource<T, AsyncReturnType<T>>(
       fetchFunc,
       keepDataAliveWhenFetching ? resourceRef.current.value : undefined,
     );
@@ -154,7 +156,7 @@ const useCreateResource = <T extends (...args: any) => any>(
 
   const refetch = useCallback(
     (...args: any) => {
-      resourceRef.current = createResource<T>(
+      resourceRef.current = createResource<T, AsyncReturnType<T>>(
         (() => funcRef.current(...args)) as T,
         keepDataAliveWhenFetching ? resourceRef.current.value : undefined,
       );

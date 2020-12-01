@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { createContext } from "react";
 import {
   Resource,
   RESOURCE_PENDING,
@@ -25,10 +25,10 @@ function readContext(Context: React.Context<any>) {
   return dispatcher.readContext(Context);
 }
 
-const CacheContext = React.createContext(null);
+const CacheContext = createContext(null);
 
-function getResult<T extends (...args: any) => any>(
-  resource: Resource<T>,
+function getResult<T extends (...args: any) => any, I>(
+  resource: Resource<T, I>,
   fetch: () => any,
 ) {
   let error;
@@ -71,10 +71,10 @@ function getResult<T extends (...args: any) => any>(
   return resource;
 }
 
-function accessResult<T extends (...args: any) => any>(
-  resource: Resource<T>,
+function accessResult<T extends (...args: any) => any, I>(
+  resource: Resource<T, I>,
   fetch: T,
-): Resource<T> {
+): Resource<T, I> {
   if (resource.status === undefined) {
     const newResult = getResult(resource, fetch);
     return newResult;
@@ -83,11 +83,11 @@ function accessResult<T extends (...args: any) => any>(
   }
 }
 
-function createResource<T extends (...args: any) => any>(
+function createResource<T extends (...args: any) => any, I>(
   fetch: T,
-  initialValue?: any,
-): Resource<T> {
-  const resource: Resource<T> = {
+  initialValue?: I,
+): Resource<T, I> {
+  const resource: Resource<T, I> = {
     status: undefined,
     value: initialValue,
     error: undefined,

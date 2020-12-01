@@ -1,4 +1,3 @@
-import { areHookInputsEqual } from "../utilities/areHookInputsEqual";
 import type { AsyncReturnType } from "./utils";
 
 export const RESOURCE_PENDING = 0;
@@ -11,13 +10,14 @@ type ResourceStatus =
   | undefined;
 
 export type Resource<
-  T extends (...args: any) => any = (...args: any) => any
+  T extends (...args: any) => any = (...args: any) => any,
+  I = undefined
 > = {
   read(): AsyncReturnType<T> | undefined;
   preload(): void;
   status: ResourceStatus;
   isLoading: boolean;
-  value: AsyncReturnType<T> | undefined;
+  value: AsyncReturnType<T> | I | undefined;
   promise:
     | (T extends Promise<any>
         ? T
@@ -53,6 +53,6 @@ export interface Options {
 }
 
 export interface UseCreateResourceResponse<T extends (...args: any) => any> {
-  resource: Resource<T>;
+  resource: Resource<T, AsyncReturnType<T>>;
   refetch: (...args: Parameters<T>) => void;
 }
