@@ -123,7 +123,7 @@ const useCreateResource = <T extends (...args: any) => any>(
   {
     isPreloadAfterCallRefetch = true,
     startFetchAtFirstRender = true,
-    keepDataAliveWhenFetching = false,
+    keepDataAliveWhenFetching = true,
   }: Options = {},
 ): UseCreateResourceResponse<T> => {
   const [, forceUpdate] = useState({});

@@ -21,13 +21,21 @@ export default () => {
   console.log(data, isLoading);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        overflow: "scroll",
+        height: "100%",
+      }}
+    >
       <h3>useFetching</h3>
       <span>1 second loading start delay</span>
       <ShowResponse {...{ data, isLoading, refetch, error }} />
       <TestFetch />
       <TestFetchCallback />
       <TestFetchingCallback />
+      <div style={{ minHeight: "100px", width: "50px", display: "flex" }} />
     </div>
   );
 };
@@ -60,7 +68,7 @@ function TestFetch() {
   );
 }
 
-const TestFetchCallback = memo(() => {
+const TestFetchCallback = memo(function TestFetchCallback() {
   const { data, isLoading, error, refetch } = useFetching(async () => {
     const r = await fetch("https://gorest.co.in/public-api/users", {
       method: "GET",
@@ -82,7 +90,7 @@ function TestFetchingCallback() {
       fetch("https://gorest.co.in/public-api/users", {
         method: "GET",
       }).then((r) => r.json()),
-    { keepDataAliveWhenFetching: true },
+    { keepDataAliveWhenFetching: false },
   );
 
   return (
@@ -100,27 +108,27 @@ function ShowResponse({ data, isLoading, refetch, error }) {
     <>
       <button
         onClick={refetch}
-        style={{ width: 100, height: 40 }}
+        style={{ width: 100, height: 20 }}
         title="start fetch"
       >
         Fetch
       </button>
-      <div
+      <span
         style={{
-          marginBottom: 20,
+          marginBottom: 5,
           color: isLoading ? "blue" : "black",
         }}
       >
         {isLoading ? "is loading ... " : "loading is false"}
-      </div>
-      <div
+      </span>
+      <span
         style={{
           color: data ? "green" : "red",
         }}
       >
         {data ? "Data is loaded" : "Data is not loaded"}
-      </div>
-      <p>{error?.message ?? ""}</p>
+      </span>
+      <span>{error?.message ?? ""}</span>
     </>
   );
 }
