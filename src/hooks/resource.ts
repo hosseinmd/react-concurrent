@@ -124,6 +124,7 @@ const useCreateResource = <T extends (...args: any) => any>(
     isPreloadAfterCallRefetch = true,
     startFetchAtFirstRender = true,
     keepDataAliveWhenFetching = true,
+    abort,
   }: Options = {},
 ): UseCreateResourceResponse<T> => {
   const [, forceUpdate] = useState({});
@@ -148,6 +149,10 @@ const useCreateResource = <T extends (...args: any) => any>(
     !isArgChanged ||
     (resourceRef.current === emptyResource && startFetchAtFirstRender)
   ) {
+    if (resourceRef.current.status === RESOURCE_PENDING) {
+      abort?.();
+    }
+
     resourceRef.current = createResource<T, AsyncReturnType<T>>(
       fetchFunc,
       keepDataAliveWhenFetching ? resourceRef.current.value : undefined,
@@ -156,6 +161,10 @@ const useCreateResource = <T extends (...args: any) => any>(
 
   const refetch = useCallback(
     (...args: any) => {
+      if (resourceRef.current.status === RESOURCE_PENDING) {
+        abort?.();
+      }
+
       resourceRef.current = createResource<T, AsyncReturnType<T>>(
         (() => funcRef.current(...args)) as T,
         keepDataAliveWhenFetching ? resourceRef.current.value : undefined,

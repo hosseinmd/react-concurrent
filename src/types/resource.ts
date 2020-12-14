@@ -50,6 +50,8 @@ export interface Options {
    * Default is false
    */
   keepDataAliveWhenFetching?: boolean;
+  /** Called immediately before another refetch called if previous refetch not completed */
+  abort?: () => void;
 }
 
 export interface UseCreateResourceResponse<T extends (...args: any) => any> {
