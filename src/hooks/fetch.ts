@@ -22,7 +22,7 @@ const useFetchingCallback = <T extends (...args: any) => any>(
     ...options,
     startFetchAtFirstRender: false,
   });
-  const { data, error, isLoading } = useResource<T>(resource, options);
+  const { data, error, isLoading } = useResource(resource, options);
 
   return { data, error, isLoading, refetch };
 };
@@ -41,7 +41,7 @@ const useFetching = <T extends (...args: any) => any>(
   options?: UseFetchingOptions,
 ) => {
   const { resource, refetch } = useCreateResource<T>(fetchFunc, deps, options);
-  const { data, error, isLoading } = useResource<T>(resource, {
+  const { data, error, isLoading } = useResource(resource, {
     loadingStartDelay: options?.loadingStartDelay,
   });
 

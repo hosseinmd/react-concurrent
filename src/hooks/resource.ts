@@ -31,10 +31,10 @@ export type UseResourceOptions = {
  * @example
  *   const { data = [], isLoading, error } = useResource(resource);
  */
-function useResource<V extends (...args: any) => any>(
-  resource: Resource<V, AsyncReturnType<V>>,
+function useResource<T extends Resource<any, any>>(
+  resource: T,
   { loadingStartDelay }: UseResourceOptions = {},
-): UseResourceResponse<AsyncReturnType<V>> {
+): UseResourceResponse<T["value"]> {
   const [, forceUpdate] = useState({});
 
   resource.preload();

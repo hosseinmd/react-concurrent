@@ -83,7 +83,7 @@ function accessResult<T extends (...args: any) => any, I>(
   }
 }
 
-function createResource<T extends (...args: any) => any, I>(
+function createResource<T extends (...args: any) => any, I = undefined>(
   fetch: T,
   initialValue?: I,
 ): Resource<T, I> {
