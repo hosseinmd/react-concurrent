@@ -1,6 +1,6 @@
 {
   "name": "react-concurrent",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "A new Render-as-You-Fetch pattern for fetching data.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

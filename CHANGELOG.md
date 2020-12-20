@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.2](https://github.com/hosseinmd/react-concurrent/compare/v2.2.1...v2.2.2) (2020-12-20)
+
+
+### Bug Fixes
+
+* createResource type ([7a3f276](https://github.com/hosseinmd/react-concurrent/commit/7a3f27605bf4e2936613a5c7b97483aa7e6beff5))
+
 ### [2.2.1](https://github.com/hosseinmd/react-concurrent/compare/v2.2.0...v2.2.1) (2020-12-01)
 
 
