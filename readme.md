@@ -1,4 +1,9 @@
-# React-Concurrent A collection of hooks for fetching data easily.
+** This project is not under maintaining  ***
+# Recomended to use react-query instead
+https://github.com/tannerlinsley/react-query
+
+
+### React-Concurrent A collection of hooks for fetching data easily.
 
 [![NPM](https://nodei.co/npm/react-concurrent.png)](https://nodei.co/npm/react-concurrent/)
 
